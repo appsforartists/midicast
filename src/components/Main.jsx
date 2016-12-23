@@ -14,17 +14,12 @@
  *  under the License.
  */
 
-// Using a single entry for all our pages to make Hot Module Replacement work on
-// all pages with a single bundle. Each module checks if the current page
-// matches its expectations before running.
+import * as React from 'react';
 
-import './popup';
-import './background';
+import SongScanner from './SongScanner';
 
-if (module.hot) {
-  module.hot.accept(
-    () => {
-      location.reload();
-    }
-  );
+// Eventually, we'll probably have playback controls on its own tab, and we can
+// switch between them here.
+export default function Main() {
+  return <SongScanner />
 }

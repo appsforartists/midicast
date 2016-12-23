@@ -14,17 +14,30 @@
  *  under the License.
  */
 
-// Using a single entry for all our pages to make Hot Module Replacement work on
-// all pages with a single bundle. Each module checks if the current page
-// matches its expectations before running.
+import * as React from 'react';
 
-import './popup';
-import './background';
-
-if (module.hot) {
-  module.hot.accept(
-    () => {
-      location.reload();
-    }
+export default function Button({
+  children,
+  onClick ,
+  backgroundColor = '#4285F4',
+  color = '#FFFFFF',
+  elevation = 1,
+  ...otherStyles,
+}) {
+  return (
+    <button
+      onClick = { onClick }
+      className = { `mdc-button mdc-elevation--z${ elevation }` }
+      style = {
+        {
+          ...otherStyles,
+          backgroundColor,
+          color,
+        }
+      }
+    >
+      { children }
+    </button>
   );
 }
+export Button;

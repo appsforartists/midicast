@@ -14,17 +14,19 @@
  *  under the License.
  */
 
-// Using a single entry for all our pages to make Hot Module Replacement work on
-// all pages with a single bundle. Each module checks if the current page
-// matches its expectations before running.
+import * as React from 'react';
 
-import './popup';
-import './background';
+import {
+  Block,
+} from 'jsxstyle';
 
-if (module.hot) {
-  module.hot.accept(
-    () => {
-      location.reload();
-    }
+export default function Icon({ children, ...props }) {
+  return (
+    <Block
+      className = 'material-icons'
+      ...props
+    >
+      { children }
+    </Block>
   );
 }

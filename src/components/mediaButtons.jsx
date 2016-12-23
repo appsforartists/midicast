@@ -14,17 +14,22 @@
  *  under the License.
  */
 
-// Using a single entry for all our pages to make Hot Module Replacement work on
-// all pages with a single bundle. Each module checks if the current page
-// matches its expectations before running.
+import * as React from 'react';
 
-import './popup';
-import './background';
+import Icon from './Icon';
 
-if (module.hot) {
-  module.hot.accept(
-    () => {
-      location.reload();
-    }
+export function PlayButton() {
+  return (
+    <Icon>
+      play_arrow
+    </Icon>
+  );
+}
+
+export function PauseButton() {
+  return (
+    <Icon>
+      pause
+    </Icon>
   );
 }

@@ -10,6 +10,7 @@ module.exports = {
   server: {
     port: 8080,
     hmrPath: '/dist/bundle_hmr',
+    hmrHost: 'http://localhost:8080',
     bundlePath: '/dist/bundle.js',
     sourceMapPath: '/dist/bundle.js.map',
     redirectNotFoundToIndex: true,
@@ -24,9 +25,17 @@ module.exports = {
     [
       require.resolve('pundle-preset-typescript'),
       {
+        loader: {
+          extensions: ['js', 'jsx', 'ts', 'tsx'],
+        },
         transformer: {
           extensions: ['js', 'jsx', 'ts', 'tsx'],
-        }
+          config: {
+            compilerOptions: {
+              jsx: 'react',
+            }
+          },
+        },
       }
     ],
   ],
