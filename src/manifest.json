@@ -1,12 +1,17 @@
 {
   "manifest_version": 2,
-  "name": "MIDI Player",
+  "name": "Midiano",
   "version": "0.1",
   "content_security_policy": "script-src 'self' http://localhost:8080/dist/bundle.js; object-src 'self'",
   "background": {
-    "page": "index.html"
+    "page": "background.html"
+  },
+  "browser_action": {
+    "default_icon": "noto-piano.png",
+    "default_popup": "popup.html"
   },
   "permissions": [
+    "activeTab",
     "http://localhost/",
     "http://*/",
     "https://*/"
