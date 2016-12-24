@@ -9,10 +9,12 @@
   "author": "Brenton Simpson <appsforartists@google.com>",
   "license": "apache-2.0",
   "dependencies": {
+    "@types/chrome": "^0.0.36",
     "jsxstyle": "^1.0.2",
     "midiconvert": "^0.4.0",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
+    "rxjs": "^5.0.2",
     "webmidi": "^2.0.0-rc.3"
   },
   "devDependencies": {
