@@ -43,3 +43,34 @@ export function activeTabDriver(snippet$: Observable<string>): Observable<any> {
     }
   );
 }
+
+/**
+ * Creates a Cycle.js driver to send and receive messages in a WebExtension.
+ */
+export function createMessageDriver(channelName: string): MessageDriver {
+  const channel = chrome.runtime.connect({ name: channelName });
+
+  /**
+   * Accepts a stream of messages to send on the channel and returns a stream of
+   * responses received on the channel.
+   */
+  return function messageDriver(outgoingMessage$: Observable<any>): Observable<any> {
+    outgoingMessage$.subscribe(channel.postMessage);
+
+    return Observable.create(
+      observer => {
+        function forwardMessage(incomingMessage) {
+          observer.next(incomingMessage);
+        }
+
+        channel.onMessage.addListener(forwardMessage);
+
+        return () => {
+          channel.onMessage.removeListener(forwardMessage);
+        }
+      }
+    );
+  }
+}
+
+export type MessageDriver = (message$: Observable<any>) => Observable<any>;
