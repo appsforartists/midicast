@@ -1,7 +1,11 @@
+const {
+  compilerOptions,
+} = require('./tsconfig');
+
 module.exports = {
   debug: true,
   // ^ Setting this to true sets "process.env.NODE_ENV" to "development" in processed js, it's set to "production" otherwise
-  entry: ['./src/index.js'],
+  entry: ['./src/index.ts'],
   output: {
     bundlePath: '/dist/bundle.js',
     sourceMap: true,
@@ -30,11 +34,7 @@ module.exports = {
         },
         transformer: {
           extensions: ['js', 'jsx', 'ts', 'tsx'],
-          config: {
-            compilerOptions: {
-              jsx: 'react',
-            }
-          },
+          config: { compilerOptions },
         },
       }
     ],

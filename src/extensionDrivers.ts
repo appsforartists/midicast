@@ -18,13 +18,11 @@ import {
   Observable,
 } from 'rxjs';
 
-import '@types/chrome';
-
 /**
  * Accepts a stream of code snippets to execute on the active tab and returns a
  * stream of responses.
  */
-export function activeTabDriver(snippet$: Observable<string>): Observable<any> {
+export function hostPageDriver(snippet$: Observable<string>): Observable<any> {
   return Observable.create(
     observer => {
       const subscription = snippet$.subscribe(
@@ -39,7 +37,7 @@ export function activeTabDriver(snippet$: Observable<string>): Observable<any> {
         }
       );
 
-      return subscription.unsubscribe();
+      return subscription.unsubscribe;
     }
   );
 }

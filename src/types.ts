@@ -14,17 +14,19 @@
  *  under the License.
  */
 
-// Using a single entry for all our pages to make Hot Module Replacement work on
-// all pages with a single bundle. Each module checks if the current page
-// matches its expectations before running.
+import { DOMSource } from '@cycle/dom/rxjs-typings';
+import { VNode } from '@cycle/dom';
 
-import './popup';
-import './background';
+import {
+  Observable,
+} from 'rxjs';
 
-if (module.hot) {
-  module.hot.accept(
-    () => {
-      location.reload();
-    }
-  );
+export type Sources<T> = {
+  DOM: DOMSource,
+  hostPage: Observable<T>,
+}
+
+export type Sinks = {
+  DOM: Observable<VNode>,
+  hostPage: Observable<string>,
 }

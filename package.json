@@ -7,17 +7,19 @@
   "description": "Chrome Experiment to play MIDI files with WebMIDI API",
   "main": "dist/index.js",
   "author": "Brenton Simpson <appsforartists@google.com>",
-  "license": "apache-2.0",
+  "license": "Apache-2.0",
   "dependencies": {
-    "@types/chrome": "^0.0.36",
-    "jsxstyle": "^1.0.2",
+    "@cycle/dom": "^14.3.0",
+    "@cycle/rxjs-run": "^3.3.0",
     "midiconvert": "^0.4.0",
-    "react": "^15.4.1",
-    "react-dom": "^15.4.1",
     "rxjs": "^5.0.2",
-    "webmidi": "^2.0.0-rc.3"
+    "snabbdom-jsx": "^0.3.1",
+    "tslib": "^1.4.0",
+    "webmidi": "^2.0.0-rc.3",
+    "xstream": "^9.3.0"
   },
   "devDependencies": {
+    "@types/chrome": "^0.0.36",
     "pundle": "2.0.0-beta3",
     "pundle-cli": "2.0.0-beta3",
     "pundle-dev": "2.0.0-beta3",

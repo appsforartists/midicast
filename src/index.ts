@@ -14,14 +14,31 @@
  *  under the License.
  */
 
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+// Using a single entry for all our pages to make Hot Module Replacement work on
+// all pages with a single bundle. Each module checks if the current page
+// matches its expectations before running.
 
-import Main from './components/Main';
+import { run } from '@cycle/rxjs-run';
+import { makeDOMDriver } from '@cycle/dom';
+
+import SongScanner from './cycles/SongScanner';
+import Background from './background';
+
+import { hostPageDriver } from './extensionDrivers';
+
+const drivers = {
+  DOM: makeDOMDriver('#root'),
+  hostPage: hostPageDriver,
+};
 
 if (location.href.includes('popup')) {
-  ReactDOM.render(
-    <Main />,
-    document.getElementById('root')
+  run(SongScanner, drivers);
+}
+
+if (module.hot) {
+  module.hot.accept(
+    () => {
+      location.reload();
+    }
   );
 }
