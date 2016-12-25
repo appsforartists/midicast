@@ -9,6 +9,7 @@
     ],
     "module": "commonjs",
     "moduleResolution": "node",
+    "noImplicitAny": true,
     "noImplicitThis": true,
     "sourceMap": true,
     "strictNullChecks": true,

@@ -18,6 +18,8 @@ import {
   Observable,
 } from 'rxjs';
 
+import * as MIDIConvert from 'midiconvert';
+
 import {
   MessageType,
   Sinks,
@@ -25,13 +27,31 @@ import {
 } from '../types';
 
 export default function Background({ messages: message$, pianoConnection: pianoError$ }: Sources): Sinks {
-  const requestedSong$ = message$.filter(
+  const requestedSongURL$ = message$.filter(
     message => message.type === MessageType.PLAY_SONG
   ).pluck('payload');
+
+  const song$ = requestedSongURL$.flatMap(
+    url => Observable.fromPromise(
+      fetch(url).then(
+        response => response.arrayBuffer()
+      ).then(
+        MIDIConvert.parse
+      )
+    // Prevent Promise errors from breaking the stream
+    ).catch(
+      error => {
+        console.error(error);
+        return Observable.empty();
+      }
+    )
+  );
+
+  song$.subscribe(console.log);
 
   return {
     messages: pianoError$,
     piano: Observable.empty(),
-    pianoConnection: requestedSong$,
+    pianoConnection: requestedSongURL$,
   }
 }

@@ -50,13 +50,13 @@ const scrollStyle = {
 };
 
 export type MIDILink = {
-  link: string,
+  url: string,
   label: string,
 };
 
 export default function SongScanner({ DOM, hostPage: midiLinks$, messages: message$ }: Sources<Array<MIDILink>>): Sinks {
   const scanClick$ = DOM.select('#scan-button').events('click');
-  const selectedSongLink$ = DOM.select('.song-link').events('click').map(
+  const selectedSongURL$ = DOM.select('.song-link').events('click').map(
     event => event.currentTarget.dataset.href
   );
   const appBarElevation$ = DOM.select('#scroll-area').events('scroll').map(
@@ -127,13 +127,13 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
                 : midiLinks.length === 0
                   ? 'No songs found.'
                   : midiLinks.map(
-                      ({ label, link }) => (
+                      ({ label, url }) => (
                         <li
                           className = 'song-link mdc-list-item'
                           style = { inflexableStyle }
                           attrs = {
                             {
-                              'data-href': link,
+                              'data-href': url,
                             }
                           }
                         >
@@ -161,26 +161,26 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
           a => {
             const href = a.getAttribute('href');
 
-            const link = href.startsWith('http')
+            const url = href.startsWith('http')
               ? href
               : href.startsWith('/')
                 ? location.origin + href
                 : location.href.substring(0, location.href.lastIndexOf('/') + 1) + href;
 
             return {
-              link,
-              // If the link doesn't contain text, use the filename as the label
-              label: a.innerText || link.substr(link.lastIndexOf('/') + 1)
+              url,
+              // If the url doesn't contain text, use the filename as the label
+              label: a.innerText || url.substr(url.lastIndexOf('/') + 1)
             };
           }
         )
       `
     ),
-    messages: selectedSongLink$.map(
-      link => (
+    messages: selectedSongURL$.map(
+      url => (
         {
           type: MessageType.PLAY_SONG,
-          payload: link,
+          payload: url,
         }
       ),
   };
