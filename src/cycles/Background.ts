@@ -24,16 +24,14 @@ import {
   Sources,
 } from '../types';
 
-export default function Background({ messages: message$, piano: pianoError$ }: Sources): Sinks {
+export default function Background({ messages: message$, pianoConnection: pianoError$ }: Sources): Sinks {
   const requestedSong$ = message$.filter(
     message => message.type === MessageType.PLAY_SONG
   ).pluck('payload');
 
   return {
     messages: pianoError$,
-    piano: {
-      connectionRequest$: requestedSong$,
-      note$: Observable.empty(),
-    }
+    piano: Observable.empty(),
+    pianoConnection: requestedSong$,
   }
 }

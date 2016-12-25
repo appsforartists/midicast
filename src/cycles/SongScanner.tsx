@@ -54,11 +54,15 @@ export type MIDILink = {
   label: string,
 };
 
-export default function SongScanner({ DOM, hostPage: midiLinks$ }: Sources<Array<MIDILink>>): Sinks {
+export default function SongScanner({ DOM, hostPage: midiLinks$, messages: message$ }: Sources<Array<MIDILink>>): Sinks {
   const scanClick$ = DOM.select('#scan-button').events('click');
   const selectedSongLink$ = DOM.select('.song-link').events('click').map(
     event => event.currentTarget.dataset.href
   );
+
+  // Listen to message$ manually until we start plumbing it to UI; otherwise,
+  // Chrome will be upset that we're sending messages to a black hole
+  message$.subscribe(console.log);
 
   const vtree$ = midiLinks$.startWith(null).map(
     midiLinks => (
@@ -143,7 +147,7 @@ export default function SongScanner({ DOM, hostPage: midiLinks$ }: Sources<Array
     hostPage: scanClick$.mapTo(
       `
         Array.from(document.getElementsByTagName('a')).filter(
-          a => (a.getAttribute('href') || '').includes('.mid')
+          a => (a.getAttribute('href') || '').match(/\\.mid([^\\w]|$)/g)
         ).map(
           a => {
             const href = a.getAttribute('href');

@@ -23,14 +23,18 @@ import { makeDOMDriver } from '@cycle/dom';
 
 import SongScanner from './cycles/SongScanner';
 import Background from './cycles/Background';
-import pianoDriver from './pianoDriver';
+import makePianoAndConnectionDriver from './pianoDriver';
 
 import {
-  createMessageDriver,
   hostPageDriver,
+  makeMessagesDriver,
 } from './extensionDrivers';
 
-const messageDriver = createMessageDriver('background:popup');
+const messagesDriver = makeMessagesDriver('background:popup');
+const {
+  pianoDriver,
+  pianoConnectionDriver,
+} = makePianoAndConnectionDriver();
 
 if (location.href.includes('popup')) {
   run(
@@ -38,7 +42,7 @@ if (location.href.includes('popup')) {
     {
       DOM: makeDOMDriver('#root'),
       hostPage: hostPageDriver,
-      messages: messageDriver,
+      messages: messagesDriver,
     }
   );
 
@@ -46,8 +50,9 @@ if (location.href.includes('popup')) {
   run(
     Background,
     {
-      messages: messageDriver,
+      messages: messagesDriver,
       piano: pianoDriver,
+      pianoConnection: pianoConnectionDriver,
     }
   );
 }

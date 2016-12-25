@@ -52,15 +52,13 @@ export type Sources<T> = {
   DOM?: DOMSource,
   hostPage?: Observable<T>,
   messages: Observable<Message<any>>,
-  piano?: Observable<Message<ErrorPayload>>,
+  pianoConnection?: Observable<Message<ErrorPayload>>,
 }
 
 export type Sinks = {
   DOM?: Observable<VNode>,
   hostPage?: Observable<string>,
   messages?: Observable<Message<any>>,
-  piano?: {
-    note$: Observable<Note>,
-    connectionRequest$: Observable<any>,
-  }
+  piano?: Observable<Note>,
+  pianoConnection?: Observable<any>,
 }
