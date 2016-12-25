@@ -21,12 +21,46 @@ import {
   Observable,
 } from 'rxjs';
 
+// TS doesn't like trailing commas in enums
+export enum MessageType {
+  ERROR,
+  PLAY_SONG
+}
+
+export type Message<T> = {
+  type: MessageType,
+  payload: T
+}
+
+export enum ErrorType {
+  DISCONNECTED,
+  UNKNOWN
+}
+
+export type ErrorPayload = {
+  type: ErrorType,
+  message?: string,
+}
+
+export type Note = {
+  note: number,
+  velocity: number,
+  duration: number,
+}
+
 export type Sources<T> = {
-  DOM: DOMSource,
-  hostPage: Observable<T>,
+  DOM?: DOMSource,
+  hostPage?: Observable<T>,
+  messages: Observable<Message<any>>,
+  piano?: Observable<Message<ErrorPayload>>,
 }
 
 export type Sinks = {
-  DOM: Observable<VNode>,
-  hostPage: Observable<string>,
+  DOM?: Observable<VNode>,
+  hostPage?: Observable<string>,
+  messages?: Observable<Message<any>>,
+  piano?: {
+    note$: Observable<Note>,
+    connectionRequest$: Observable<any>,
+  }
 }

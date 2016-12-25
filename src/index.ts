@@ -22,17 +22,34 @@ import { run } from '@cycle/rxjs-run';
 import { makeDOMDriver } from '@cycle/dom';
 
 import SongScanner from './cycles/SongScanner';
-import Background from './background';
+import Background from './cycles/Background';
+import pianoDriver from './pianoDriver';
 
-import { hostPageDriver } from './extensionDrivers';
+import {
+  createMessageDriver,
+  hostPageDriver,
+} from './extensionDrivers';
 
-const drivers = {
-  DOM: makeDOMDriver('#root'),
-  hostPage: hostPageDriver,
-};
+const messageDriver = createMessageDriver('background:popup');
 
 if (location.href.includes('popup')) {
-  run(SongScanner, drivers);
+  run(
+    SongScanner,
+    {
+      DOM: makeDOMDriver('#root'),
+      hostPage: hostPageDriver,
+      messages: messageDriver,
+    }
+  );
+
+} else if (location.href.includes('background')) {
+  run(
+    Background,
+    {
+      messages: messageDriver,
+      piano: pianoDriver,
+    }
+  );
 }
 
 if (module.hot) {

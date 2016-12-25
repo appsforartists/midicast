@@ -21,8 +21,10 @@ import {
 import { html } from 'snabbdom-jsx';
 
 import {
-  Sources,
+  Message,
+  MessageType,
   Sinks,
+  Sources,
 } from '../types';
 
 const flexStyle = {
@@ -55,7 +57,7 @@ export type MIDILink = {
 export default function SongScanner({ DOM, hostPage: midiLinks$ }: Sources<Array<MIDILink>>): Sinks {
   const scanClick$ = DOM.select('#scan-button').events('click');
   const selectedSongLink$ = DOM.select('.song-link').events('click').map(
-    event => event.target.dataset.href
+    event => event.currentTarget.dataset.href
   );
 
   const vtree$ = midiLinks$.startWith(null).map(
@@ -154,13 +156,19 @@ export default function SongScanner({ DOM, hostPage: midiLinks$ }: Sources<Array
 
             return {
               link,
-              // If the link doesn't contain text, use the filename as the
-              // label
+              // If the link doesn't contain text, use the filename as the label
               label: a.innerText || link.substr(link.lastIndexOf('/') + 1)
             };
           }
         )
       `
     ),
+    messages: selectedSongLink$.map(
+      link => (
+        {
+          type: MessageType.PLAY_SONG,
+          payload: link,
+        }
+      ),
   };
 }
