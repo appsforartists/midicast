@@ -55,21 +55,14 @@ export type MIDILink = {
 };
 
 export default function SongScanner({ DOM, hostPage: midiLinks$, messages: message$ }: Sources<Array<MIDILink>>): Sinks {
-  const scanClick$ = DOM.select('#scan-button').events('click');
   const selectedSongURL$ = DOM.select('.song-link').events('click').map(
     event => event.currentTarget.dataset.href
   );
-  const appBarElevation$ = DOM.select('#scroll-area').events('scroll').map(
-    event => Number(event.target.scrollTop !== 0)
-  ).startWith(0);
 
   message$.subscribe(console.log);
 
-  const vtree$ = Observable.combineLatest(
-    midiLinks$.startWith(null),
-    appBarElevation$
-  ).map(
-    ([ midiLinks, appBarElevation ]) => (
+  const vtree$ = midiLinks$.map(
+    (midiLinks) => (
       <div
         style = {
           {
@@ -81,34 +74,6 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
           }
         }
       >
-        <div
-          className = { `mdc-elevation--z${ appBarElevation }` }
-          style = {
-            {
-              ...rowStyle,
-              ...inflexableStyle,
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: '100%',
-              paddingTop: '8px',
-              paddingBottom: '8px',
-            }
-          }
-        >
-          <button
-            id = 'scan-button'
-            className = 'mdc-button mdc-elevation--z1'
-            style = {
-              {
-                backgroundColor: '#4285F4',
-                color: '#FFFFFF',
-              }
-            }
-          >
-            Scan this page for songs
-          </button>
-        </div>
-
         <div
           id = 'scroll-area'
           style = {
@@ -153,7 +118,7 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
 
   return {
     DOM: vtree$,
-    hostPage: scanClick$.mapTo(
+    hostPage: Observable.of(
       `
         Array.from(document.getElementsByTagName('a')).filter(
           a => (a.getAttribute('href') || '').match(/\\.mid([^\\w]|$)/g)
