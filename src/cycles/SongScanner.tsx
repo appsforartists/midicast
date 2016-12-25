@@ -59,13 +59,17 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
   const selectedSongLink$ = DOM.select('.song-link').events('click').map(
     event => event.currentTarget.dataset.href
   );
+  const appBarElevation$ = DOM.select('#scroll-area').events('scroll').map(
+    event => Number(event.target.scrollTop !== 0)
+  ).startWith(0);
 
-  // Listen to message$ manually until we start plumbing it to UI; otherwise,
-  // Chrome will be upset that we're sending messages to a black hole
   message$.subscribe(console.log);
 
-  const vtree$ = midiLinks$.startWith(null).map(
-    midiLinks => (
+  const vtree$ = Observable.combineLatest(
+    midiLinks$.startWith(null),
+    appBarElevation$
+  ).map(
+    ([ midiLinks, appBarElevation ]) => (
       <div
         style = {
           {
@@ -78,10 +82,14 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
         }
       >
         <div
+          className = { `mdc-elevation--z${ appBarElevation }` }
           style = {
             {
               ...rowStyle,
               ...inflexableStyle,
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '100%',
               paddingTop: '8px',
               paddingBottom: '8px',
             }
@@ -102,6 +110,7 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
         </div>
 
         <div
+          id = 'scroll-area'
           style = {
             {
               ...scrollStyle,
