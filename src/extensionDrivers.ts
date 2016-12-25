@@ -45,14 +45,14 @@ export function hostPageDriver(snippet$: Observable<string>): Observable<any> {
 /**
  * Creates a Cycle.js driver to send and receive messages in a WebExtension.
  */
-export function createMessageDriver(channelName: string): MessageDriver {
+export function makeMessagesDriver(channelName: string): MessagesDriver {
   const outgoingChannel = chrome.runtime.connect({ name: channelName });
 
   /**
    * Accepts a stream of messages to send on the channel and returns a stream of
    * responses received on the channel.
    */
-  return function messageDriver(outgoingMessage$: Observable<any>): Observable<any> {
+  return function messagesDriver(outgoingMessage$: Observable<any>): Observable<any> {
     outgoingMessage$.subscribe(
       outgoingChannel.postMessage.bind(outgoingChannel)
     );
@@ -86,4 +86,4 @@ export function createMessageDriver(channelName: string): MessageDriver {
   }
 }
 
-export type MessageDriver = (message$: Observable<any>) => Observable<any>;
+export type MessagesDriver = (message$: Observable<any>) => Observable<any>;
