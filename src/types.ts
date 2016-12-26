@@ -48,6 +48,11 @@ export type Note = {
   duration: number,
 }
 
+export type Tabs = {
+  label: string,
+  component: (Sources<any>) => Sinks,
+}
+
 export type Sources<T> = {
   DOM?: DOMSource,
   hostPage?: Observable<T>,

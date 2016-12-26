@@ -49,10 +49,7 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
       <InflexibleColumn
         component = 'ul'
         className = 'mdc-list'
-        position = 'relative'
-        overflow = 'auto'
-        width = { 600 }
-        height = { 600 }
+        minWidth = '100%'
       >
         {
           !midiLinks

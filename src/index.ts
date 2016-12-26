@@ -21,7 +21,7 @@
 import { run } from '@cycle/rxjs-run';
 import { makeDOMDriver } from '@cycle/dom';
 
-import SongScanner from './cycles/SongScanner';
+import Popup from './cycles/Popup';
 import Background from './cycles/Background';
 import makePianoAndConnectionDriver from './pianoDriver';
 
@@ -38,7 +38,7 @@ const {
 
 if (location.href.includes('popup')) {
   run(
-    SongScanner,
+    Popup,
     {
       DOM: makeDOMDriver('#root'),
       hostPage: hostPageDriver,
