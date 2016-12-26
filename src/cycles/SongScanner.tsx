@@ -27,27 +27,10 @@ import {
   Sources,
 } from '../types';
 
-const flexStyle = {
-  display: 'flex',
-};
-
-const inflexableStyle = {
-  flex: 'none',
-};
-
-const rowStyle = {
-  ...flexStyle,
-  flexDirection: 'row',
-};
-
-const columnStyle = {
-  ...flexStyle,
-  flexDirection: 'column',
-};
-
-const scrollStyle = {
-  overflow: 'auto',
-};
+import {
+  InflexibleColumn,
+  InflexibleRow,
+} from '../snabstyle';
 
 export type MIDILink = {
   url: string,
@@ -63,56 +46,41 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
 
   const vtree$ = midiLinks$.map(
     (midiLinks) => (
-      <div
-        style = {
-          {
-            ...columnStyle,
-            alignItems: 'center',
-            position: 'relative',
-            width: '600px',
-            height: '600px',
-          }
-        }
+      <InflexibleColumn
+        component = 'ul'
+        className = 'mdc-list'
+        position = 'relative'
+        overflow = 'auto'
+        width = { 600 }
+        height = { 600 }
       >
-        <div
-          id = 'scroll-area'
-          style = {
-            {
-              ...scrollStyle,
-              width: '100%',
-            }
-          }
-        >
-          <ul
-            className = 'mdc-list'
-          >
-            {
-              !midiLinks
-                ? ''
-                : midiLinks.length === 0
-                  ? 'No songs found.'
-                  : midiLinks.map(
-                      ({ label, url }) => (
-                        <li
-                          className = 'song-link mdc-list-item'
-                          style = { inflexableStyle }
-                          attrs = {
-                            {
-                              'data-href': url,
-                            }
-                          }
-                        >
-                          <span className = 'material-icons mdc-list-item__start-detail'>
-                            play_arrow
-                          </span>
-                          { label }
-                        </li>
-                      )
-                    )
-            }
-          </ul>
-        </div>
-      </div>
+        {
+          !midiLinks
+            ? ''
+            : midiLinks.length === 0
+              ? 'No songs found.'
+              : midiLinks.map(
+                  ({ label, url }) => (
+                    <InflexibleRow
+                      component = 'li'
+                      className = 'song-link mdc-list-item'
+                      cursor = 'pointer'
+                      attrs = {
+                        {
+                          'data-href': url,
+                        }
+                      }
+                    >
+                      <span className = 'material-icons mdc-list-item__start-detail'>
+                        play_arrow
+                      </span>
+
+                      { label }
+                    </InflexibleRow>
+                  )
+                )
+        }
+      </InflexibleColumn>
     )
   );
 
@@ -148,5 +116,6 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
           payload: url,
         }
       ),
+    )
   };
 }
