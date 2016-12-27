@@ -23,8 +23,6 @@ import {
 } from 'rxjs';
 
 import {
-  ErrorPayload,
-  ErrorType,
   Message,
   MessageType,
   Note,
@@ -85,13 +83,14 @@ export default function makePianoAndConnectionDriver(): PianoAndConnectionDriver
       // return an error stream here that would dispatch whenever pianoDriver
       // received a note without a piano to play it on.
       note$.withLatestFrom(piano$).subscribe(
-        ([ { note, duration, velocity }, piano ]) => {
+        ([ { note, duration, velocity, time }, piano ]) => {
           piano.playNote(
             note,
             'all',
             {
               duration,
               velocity,
+              time,
             }
           );
         }

@@ -155,6 +155,13 @@ export default function Background({ messages: message$, pianoConnection: pianoA
     notesByTrack => Observable.of(
       ...[].concat(...Object.values(notesByTrack))
     )
+  ).withLatestFrom(playStartingTime$).map(
+    ([ note, startTime ]) => (
+      {
+        ...note,
+        time: startTime + note.time,
+      }
+    )
   ).do(console.log);
 
   const currentPlaybackStatus$ = playStartingTime$.mapTo(PlaybackStatus.PLAYING).merge(
