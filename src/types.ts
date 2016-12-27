@@ -50,14 +50,14 @@ export type Note = {
 
 export type Tabs = {
   label: string,
-  component: (Sources<any>) => Sinks,
+  component(sources: Sources<any>): Sinks,
 }
 
 export type Sources<T> = {
   DOM: DOMSource,
   hostPage: Observable<T>,
   messages: Observable<Message<any>>,
-  pianoConnection: Observable<Message<ErrorPayload>>,
+  pianoConnection: Observable<boolean>,
 }
 
 // export type Sources = Dict<DOMSource | Observable<any>>;

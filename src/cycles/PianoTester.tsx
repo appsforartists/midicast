@@ -32,7 +32,7 @@ import {
 } from '../types';
 
 export default function PianoTester({ DOM }: Sources<any>): Sinks {
-  const = midi$ = DOM.select('document').events('keydown').map(
+  const midi$ = DOM.select('document').events('keydown').map(
     event => (
       {
         state: 'down',

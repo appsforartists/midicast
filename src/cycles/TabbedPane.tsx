@@ -101,6 +101,7 @@ export default function TabbedPane({ DOM, tabs: tabs$, ...sources }: Sources<any
                       i === activeTabID
                         ? 1
                         : .7
+                    }
                     borderBottom = {
                       i === activeTabID
                         ? '2px solid var(--mdc-theme-accent)'
@@ -113,7 +114,7 @@ export default function TabbedPane({ DOM, tabs: tabs$, ...sources }: Sources<any
                     }
                   >
                     { tabLabel }
-                  </Row>
+                  </FlexibleRow>
                 )
               )
             }
