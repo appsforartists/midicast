@@ -50,8 +50,6 @@ export default function makePianoAndConnectionDriver(): PianoAndConnectionDriver
               function onSuccess(midi) {
                 if (midi.outputs.size) {
                   const piano = midi.outputs.values().next().value;
-                  piano.open();
-
                   piano$.next(piano);
 
                   pianoAvailabilityObserver.next(true);
@@ -81,10 +79,9 @@ export default function makePianoAndConnectionDriver(): PianoAndConnectionDriver
       // If `piano$` dispatched `null` when a MIDI connection was lost, we could
       // return an error stream here that would dispatch whenever pianoDriver
       // received a note without a piano to play it on.
-
-      note$.do(({ note, time, velocity }) => console.log({ note, time, velocity })).withLatestFrom(piano$).subscribe(
+      note$.withLatestFrom(piano$).subscribe(
         ([ { note, duration, velocity, time }, piano ]) => {
-          // const velocity128 = Math.round(128 * velocity);
+          const velocity128 = Math.round(128 * velocity);
 
           // MIDI down is 0x9 << 4 | channel, where channel is between 0x0 and
           // 0xF.  Since the piano is on channel 0, we can ignore the channel.
@@ -94,19 +91,19 @@ export default function makePianoAndConnectionDriver(): PianoAndConnectionDriver
             [
               MIDICode.DOWN,
               note,
-              velocity,
+              velocity128,
             ],
             time
           );
 
-          // piano.send(
-          //   [
-          //     MIDICode.UP,
-          //     note,
-          //     0,
-          //   ],
-          //   time + duration
-          // );
+          piano.send(
+            [
+              MIDICode.UP,
+              note,
+              0,
+            ],
+            time + duration
+          );
         }
       );
     }
