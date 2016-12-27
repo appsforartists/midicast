@@ -40,8 +40,8 @@ export default function TabbedPane({ DOM, tabs: tabs$, ...sources }: Sources<any
     event => parseInt(event.target.dataset.id)
   ).startWith(0);
 
-  const activeTab$ = tabs$.withLatestFrom(activeTabID$).map(
-    ([ tabs, activeTabID ]) => tabs[activeTabID].component({ DOM, ...sources })
+  const activeTab$ = activeTabID$.withLatestFrom(tabs$).map(
+    ([ activeTabID, tabs ]) => tabs[activeTabID].component({ DOM, ...sources })
   );
 
   const tabLabels$ = tabs$.map(
@@ -59,7 +59,7 @@ export default function TabbedPane({ DOM, tabs: tabs$, ...sources }: Sources<any
 
   Object.keys(sources).forEach(
     driverName => sinks[driverName] = activeTab$.flatMap(
-      tabSink => tabSink[driverName]
+      tabSink => tabSink[driverName] || Observable.empty()
     )
   );
 
