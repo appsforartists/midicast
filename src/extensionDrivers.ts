@@ -54,12 +54,19 @@ export function makeMessagesDriver(channelName: string): MessagesDriver {
    */
   return function messagesDriver(outgoingMessage$: Observable<any>): Observable<any> {
     outgoingMessage$.subscribe(
-      outgoingChannel.postMessage.bind(outgoingChannel)
+      outgoingMessage => {
+        try {
+          outgoingChannel.postMessage(outgoingMessage);
+        } catch(error) {
+          console.warn('Failed to send message', outgoingMessage);
+        }
+      }
     );
 
     return Observable.create(
       observer => {
         function forwardMessage(incomingMessage) {
+          console.log(incomingMessage);
           observer.next(incomingMessage);
         }
 
