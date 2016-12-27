@@ -42,8 +42,6 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
     event => event.currentTarget.dataset.href
   );
 
-  message$.subscribe(console.log);
-
   const vtree$ = midiLinks$.map(
     (midiLinks) => (
       <InflexibleColumn
@@ -68,10 +66,6 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
                         }
                       }
                     >
-                      <span className = 'material-icons mdc-list-item__start-detail'>
-                        play_arrow
-                      </span>
-
                       { label }
                     </InflexibleRow>
                   )

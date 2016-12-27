@@ -17,7 +17,8 @@
     "strictNullChecks": true,
     "target": "es6",
     "types": [
-      "chrome"
+      "chrome",
+      "whatwg-fetch"
     ]
   }
 }

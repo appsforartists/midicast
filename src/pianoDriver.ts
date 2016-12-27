@@ -42,45 +42,42 @@ export default function makePianoAndConnectionDriver(): PianoAndConnectionDriver
     pianoConnectionDriver(request$) {
       return request$.flatMap(
         () => Observable.create(
-          (observer: Observer) => {
-            WebMidi.enable(
-              (error: Error) => {
-                if (error) {
-                  console.error(error);
-                  observer.next({
-                    type: MessageType.ERROR,
-                    payload: {
-                      type: ErrorType.UNKNOWN,
-                      message: error.message,
-                    },
-                  });
-                } else {
-                  // TODO:
-                  // - Add a listener here to dispatch a not_connected_error
-                  //   whenever the piano becomes unavailable.
-                  // - If that doesn't work, check the piano's state in
-                  //   noteAndPiano$ and forward a message to the error stream if
-                  //   it's unavailable.
-                  const piano = WebMidi.outputs[0];
+          (pianoAvailabilityObserver: Observer) => {
+            if (WebMidi.enabled) {
+              pianoAvailabilityObserver(true);
 
-                  if (piano) {
-                    piano$.next(piano);
+            } else {
+              WebMidi.enable(
+                (error: Error) => {
+                  if (error) {
+                    console.error(error);
+                    pianoAvailabilityObserver.next(false);
                   } else {
-                    observer.next({
-                      type: MessageType.DISCONNECTED,
-                      payload: {
-                        type: ErrorType.UNKNOWN,
-                      },
-                    });
-                    WebMidi.disable();
+                    // TODO:
+                    // - Add a listener here to dispatch a not_connected_error
+                    //   whenever the piano becomes unavailable.
+                    // - If that doesn't work, check the piano's state in
+                    //   noteAndPiano$ and forward a message to the error stream if
+                    //   it's unavailable.
+                    const piano = WebMidi.outputs[0];
+
+                    if (piano) {
+                      piano$.next(piano);
+                      pianoAvailabilityObserver.next(true);
+
+                    } else {
+                      pianoAvailabilityObserver.next(false);
+                      WebMidi.disable();
+                    }
                   }
+                  pianoAvailabilityObserver.complete();
                 }
-                observer.complete();
-              }
-            );
+              );
+            }
+            pianoAvailabilityObserver.complete();
           }
-        );
-      );
+        )
+      ).distinctUntilChanged();
     },
 
     pianoDriver(note$) {

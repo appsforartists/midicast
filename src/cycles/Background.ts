@@ -21,15 +21,34 @@ import {
 import * as MIDIConvert from 'midiconvert';
 
 import {
+  Dict,
+  Message,
   MessageType,
+  PlaybackStatus,
   Sinks,
   Sources,
 } from '../types';
 
-export default function Background({ messages: message$, pianoConnection: pianoError$ }: Sources): Sinks {
-  const requestedSongURL$ = message$.filter(
-    message => message.type === MessageType.PLAY_SONG
+export default function Background({ messages: message$, pianoConnection: pianoAvailability$ }: Sources<any>): Sinks {
+  const songRequest$ = message$.filter(
+    (message: Message<any>) => message.type === MessageType.PLAY_SONG
   ).pluck('payload');
+
+  const changeStatusRequest$ = message$.filter(
+    (message: Message<any>) => message.type === MessageType.CHANGE_PLAYBACK_STATUS
+  );
+
+  const playRequest$ = changeStatusRequest$.filter(
+    (message: Message<PlaybackStatus>) => message.payload === PlaybackStatus.PLAYING
+  );
+
+  const stopRequest$ = changeStatusRequest$.filter(
+    (message: Message<PlaybackStatus>) => message.payload === PlaybackStatus.STOPPED
+  );
+
+  const pianoIsOffline$ = pianoAvailability$.filter(
+    isAvailable => isAvailable == false
+  );
 
   // `song$` dispatches values in the shape:
   //
@@ -42,10 +61,10 @@ export default function Background({ messages: message$, pianoConnection: pianoE
   // so we can queue notes in decisecond increments and change which tracks are
   // included as the song is playing.
 
-  const song$ = requestedSongURL$.flatMap(
+  const song$ = songRequest$.flatMap(
     url => Observable.fromPromise(
       fetch(url).then(
-        response => response.arrayBuffer()
+        (response: Response) => response.arrayBuffer()
       ).then(
         MIDIConvert.parse
       )
@@ -55,14 +74,16 @@ export default function Background({ messages: message$, pianoConnection: pianoE
         console.error(error);
         return Observable.empty();
       }
+    ).takeUntil(
+      pianoIsOffline$
     )
   ).map(
     song => {
-      const notesByTrackByTime = {};
+      const notesByTrackByTime:Dict<Dict<any>> = {};
       let duration = 0;
 
       song.tracks.forEach(
-        (track, trackID) => {
+        (track, trackID: number) => {
           duration = Math.max(track.duration, duration);
 
           track.notes.forEach(
@@ -96,31 +117,73 @@ export default function Background({ messages: message$, pianoConnection: pianoE
     }
   ).publishReplay();
 
-  // A MemoryStream in xstream is a publishReplay() + connect() in RxJS
+  // Streams that represent properties (as opposed to events) should be
+  // memoized.  In xstream, you'd accomplish this with a MemoryStream.  The
+  // equivalent in RxJS is a publishReplay() + connect().  connect returns a
+  // subscription, so we have to do it on its own line.
   song$.connect();
 
-  const playbackStartingTime$ = song$.map(
+  const playStartingTime$ = Observable.merge(playRequest$, song$).map(
     () => performance.now()
   );
 
-  // TODO: clean this up.
-  const note$ = playbackStartingTime$.flatMap(
+  // takeUntil doesn't seem to be working as you'd expect it to.
+  const playCurrentTime$$ = playStartingTime$.map(
     startingTime => Observable.interval(100).map(
       count => count * 100
     ).withLatestFrom(song$).takeWhile(
       ([ time, song ]) => song.length > time
     ).map(
-      ([ time, song ]) => song[time]
-    ).filter(value => value !== undefined)
+      ([ time ]) => time
+    ).takeUntil(
+      Observable.merge(
+        stopRequest$,
+        pianoIsOffline$,
+      )
+    ).do(console.log)
+  );
+
+  const songStopped$ = playCurrentTime$$.flatMap(
+    interval$ => interval$.last()
+  );
+
+  const note$ = playCurrentTime$$.switch().withLatestFrom(song$).map(
+    ([ time, song ]) => song[time]
+  ).filter(
+    value => value !== undefined
   ).flatMap(
     notesByTrack => Observable.of(
       ...[].concat(...Object.values(notesByTrack))
     )
   ).do(console.log);
 
+  const currentPlaybackStatus$ = playStartingTime$.mapTo(PlaybackStatus.PLAYING).merge(
+    songStopped$.mapTo(PlaybackStatus.STOPPED)
+  );
+
   return {
-    messages: pianoError$,
+    messages: Observable.merge(
+      pianoAvailability$.map(
+        isAvailable => (
+          {
+            type: MessageType.PIANO_AVAILABILITY_CHANGED,
+            payload: isAvailable,
+          }
+        )
+      ),
+      currentPlaybackStatus$.map(
+        status => (
+          {
+            type: MessageType.PLAYBACK_STATUS_CHANGED,
+            payload: status,
+          }
+        )
+      ),
+    ),
     piano: note$,
-    pianoConnection: requestedSongURL$,
+    pianoConnection: Observable.merge(
+      songRequest$,
+      playRequest$,
+    )
   }
 }

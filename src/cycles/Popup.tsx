@@ -18,7 +18,10 @@ import {
   Observable,
 } from 'rxjs';
 
-import { html } from 'snabbdom-jsx';
+import {
+  VNode,
+  html
+} from 'snabbdom-jsx';
 
 import {
   Column,
@@ -27,10 +30,54 @@ import {
   Row,
 } from '../snabstyle';
 
+import {
+  MessageType,
+  PlaybackStatus,
+  Sources,
+  Sinks,
+} from '../types';
+
 import TabbedPane from './TabbedPane';
 import SongScanner from './SongScanner';
 
 export default function Popup({ DOM, messages: message$, ...sources }: Sources<any>): Sinks {
+  // TODO: find a way to make this get the current status from the background
+  // page when the popup reopens
+  const currentPlaybackStatus$: Observable<PlaybackStatus> = message$.filter(
+    message => message.type === MessageType.PLAYBACK_STATUS_CHANGED
+  ).pluck('payload').startWith(PlaybackStatus.STOPPED);
+
+  const buttonAction$ = currentPlaybackStatus$.map(
+    currentPlaybackStatus => {
+      if (currentPlaybackStatus === PlaybackStatus.PLAYING) {
+        return PlaybackStatus.STOPPED;
+      } else {
+        return PlaybackStatus.PLAYING;
+      }
+    }
+  );
+
+  const changePlaybackStatus$ = DOM.select('#play-button').events('click').withLatestFrom(
+    buttonAction$
+  // Play isn't implemented yet, so only send Stop
+  ).map(([, action]) => action).filter(action => action === PlaybackStatus.STOPPED).map(
+    (requestedStatus) => (
+      {
+        type: MessageType.CHANGE_PLAYBACK_STATUS,
+        payload: requestedStatus,
+      }
+    )
+  );
+
+  const buttonIcon$ = buttonAction$.map(
+    status => (
+      {
+        [PlaybackStatus.PLAYING]: 'play_arrow',
+        [PlaybackStatus.STOPPED]: 'stop',
+      }[status]
+    )
+  );
+
   const tabbedPane = TabbedPane({
     DOM,
     tabs: Observable.of(
@@ -44,12 +91,18 @@ export default function Popup({ DOM, messages: message$, ...sources }: Sources<a
     messages: message$,
     ...sources,
   });
-  const tabbedPaneDOM$ = tabbedPane.DOM;
+  const tabbedPaneDOM$: Observable<VNode> = tabbedPane.DOM;
 
   return {
     ...tabbedPane,
-    DOM: tabbedPaneDOM$.map(
-      tabbedPaneDOM => (
+    DOM: Observable.combineLatest(
+      tabbedPaneDOM$,
+      buttonIcon$,
+    ).map(
+      ([
+        tabbedPaneDOM,
+        buttonIcon,
+      ]) => (
         <Column
           className = 'mdc-theme--background'
           width = { 600 }
@@ -70,9 +123,10 @@ export default function Popup({ DOM, messages: message$, ...sources }: Sources<a
               borderRadius = { 48 }
               backgroundColor = 'var(--mdc-theme-accent)'
               color = 'var(--mdc-theme-background)'
+              cursor = 'pointer'
             >
               <MaterialIcon>
-                play_arrow
+                { buttonIcon }
               </MaterialIcon>
             </InflexibleRow>
           </InflexibleRow>
@@ -82,8 +136,8 @@ export default function Popup({ DOM, messages: message$, ...sources }: Sources<a
       )
     ),
     messages: Observable.merge(
-      message$,
       tabbedPane.messages,
+      changePlaybackStatus$,
     )
   }
 }
