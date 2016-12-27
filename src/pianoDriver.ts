@@ -14,7 +14,7 @@
  *  under the License.
  */
 
-import * as WebMidi from 'webmidi';
+import * as WebMIDI from 'webmidi';
 
 import {
   Observable,
@@ -43,11 +43,11 @@ export default function makePianoAndConnectionDriver(): PianoAndConnectionDriver
       return request$.flatMap(
         () => Observable.create(
           (pianoAvailabilityObserver: Observer) => {
-            if (WebMidi.enabled) {
-              pianoAvailabilityObserver(true);
+            if (WebMIDI.enabled) {
+              pianoAvailabilityObserver.next(true);
 
             } else {
-              WebMidi.enable(
+              WebMIDI.enable(
                 (error: Error) => {
                   if (error) {
                     console.error(error);
@@ -59,7 +59,7 @@ export default function makePianoAndConnectionDriver(): PianoAndConnectionDriver
                     // - If that doesn't work, check the piano's state in
                     //   noteAndPiano$ and forward a message to the error stream if
                     //   it's unavailable.
-                    const piano = WebMidi.outputs[0];
+                    const piano = WebMIDI.outputs[0];
 
                     if (piano) {
                       piano$.next(piano);
@@ -67,7 +67,7 @@ export default function makePianoAndConnectionDriver(): PianoAndConnectionDriver
 
                     } else {
                       pianoAvailabilityObserver.next(false);
-                      WebMidi.disable();
+                      WebMIDI.disable();
                     }
                   }
                   pianoAvailabilityObserver.complete();
