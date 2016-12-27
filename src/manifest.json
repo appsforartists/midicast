@@ -6,14 +6,13 @@
   "background": {
     "page": "background.html"
   },
-  "browser_action": {
+  "page_action": {
     "default_icon": "noto-piano.png",
     "default_popup": "popup.html"
   },
   "permissions": [
     "activeTab",
-    "http://localhost/",
-    "http://*/",
-    "https://*/"
+    "declarativeContent",
+    "http://localhost/"
   ]
 }

@@ -55,6 +55,25 @@ if (location.href.includes('popup')) {
       pianoConnection: pianoConnectionDriver,
     }
   );
+
+  chrome.runtime.onInstalled.addListener(
+    () => {
+      chrome.declarativeContent.onPageChanged.addRules(
+        [
+          {
+            conditions: [
+              new chrome.declarativeContent.PageStateMatcher({
+                css: [
+                  'a[href*=".mid"]'
+                ],
+              }),
+            ],
+            actions: [ new chrome.declarativeContent.ShowPageAction() ]
+          }
+        ]
+      );
+    }
+  );
 }
 
 if (module.hot) {
