@@ -23,7 +23,7 @@ import { makeDOMDriver } from '@cycle/dom';
 
 import Popup from './cycles/Popup';
 import Background from './cycles/Background';
-import makePianoAndConnectionDriver from './nativePianoDriver';
+import makePianoAndConnectionDriver from './pianoDriver';
 
 import {
   hostPageDriver,

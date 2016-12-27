@@ -39,7 +39,6 @@ import {
 
 import TabbedPane from './TabbedPane';
 import SongScanner from './SongScanner';
-import PianoTester from './PianoTester';
 
 export default function Popup({ DOM, messages: message$, ...sources }: Sources<any>): Sinks {
   // TODO: find a way to make this get the current status from the background
@@ -86,10 +85,6 @@ export default function Popup({ DOM, messages: message$, ...sources }: Sources<a
         {
           label: 'songs on this page',
           component: SongScanner,
-        },
-        {
-          label: 'piano tester',
-          component: PianoTester,
         },
       ],
     ),

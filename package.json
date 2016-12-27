@@ -11,17 +11,15 @@
   "dependencies": {
     "@cycle/dom": "^14.3.0",
     "@cycle/rxjs-run": "^3.3.0",
-    "@types/webmidi": "^0.0.30",
-    "@types/whatwg-fetch": "^0.0.33",
     "midiconvert": "^0.4.0",
     "rxjs": "^5.0.2",
     "snabbdom-jsx": "^0.3.1",
     "tslib": "^1.4.0",
-    "webmidi": "^2.0.0-rc.3",
     "xstream": "^9.3.0"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.36",
+    "@types/whatwg-fetch": "^0.0.33",
     "pundle": "2.0.0-beta3",
     "pundle-cli": "2.0.0-beta3",
     "pundle-dev": "2.0.0-beta3",
