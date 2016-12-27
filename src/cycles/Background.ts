@@ -20,6 +20,51 @@ import {
 
 import * as MIDIConvert from 'midiconvert';
 
+declare namespace MIDIConvert {
+  export type Note = {
+    time: number,
+    name: string,
+    midi: number,
+    velocity: number,
+    duration: number,
+  };
+
+  export type Track = {
+    name: string,
+    instrument: string,
+    notes: Array<Note>,
+    duration: number,
+    length: number,
+  };
+
+  export type ControlChange = {
+    time: number,
+    name: string,
+    midi: number,
+    velocity: number,
+    duration: number,
+  };
+
+  export type MIDI = {
+    header: {
+      bpm: number,
+      timeSignature: [number, number],
+      PPQ: number,
+    },
+    duration: number,
+
+    tracks: Array<Track>,
+
+    controlChanges: {
+      [key: number]: ControlChange
+    },
+  };
+
+  export function parse(raw: ArrayBuffer): MIDI;
+  export function load(url: string, data?: any, method?: 'GET'|'POST'): Promise<MIDI>;
+  export function create(): MIDI;
+}
+
 import {
   Dict,
   Message,
@@ -62,7 +107,7 @@ export default function Background({ messages: message$, pianoConnection: pianoA
   // included as the song is playing.
 
   const song$ = songRequest$.flatMap(
-    url => Observable.fromPromise(
+    (url: string) => Observable.fromPromise(
       fetch(url).then(
         (response: Response) => response.arrayBuffer()
       ).then(
@@ -78,41 +123,37 @@ export default function Background({ messages: message$, pianoConnection: pianoA
       pianoIsOffline$
     )
   ).do(console.log).map(
-    song => {
+    (song: MIDIConvert.MIDI) => {
       const notesByTrackByTime:Dict<Dict<any>> = {};
       let duration = 0;
 
       song.tracks.forEach(
-        (track, trackID: number) => {
-          duration = Math.max(track.duration, duration);
+        (track, trackID) => track.notes.forEach(
+          note => {
+            const time = note.time * 1000;
+            const roundedTime = Math.floor(note.time * 10) * 100;
 
-          track.notes.forEach(
-            note => {
-              const time = note.time * 1000;
-              const roundedTime = Math.floor(note.time * 10) * 100;
-
-              if (!notesByTrackByTime[roundedTime]) {
-                notesByTrackByTime[roundedTime] = {};
-              }
-
-              if (!notesByTrackByTime[roundedTime][trackID]) {
-                notesByTrackByTime[roundedTime][trackID] = [];
-              }
-
-              notesByTrackByTime[roundedTime][trackID].push(
-                {
-                  note: note.midi,
-                  duration: note.duration * 1000,
-                  velocity: note.velocity,
-                  time,
-                }
-              );
+            if (!notesByTrackByTime[roundedTime]) {
+              notesByTrackByTime[roundedTime] = {};
             }
-          )
-        }
+
+            if (!notesByTrackByTime[roundedTime][trackID]) {
+              notesByTrackByTime[roundedTime][trackID] = [];
+            }
+
+            notesByTrackByTime[roundedTime][trackID].push(
+              {
+                note: note.midi,
+                duration: note.duration * 1000,
+                velocity: note.velocity,
+                time,
+              }
+            );
+          }
+        )
       );
 
-      notesByTrackByTime.length = Math.round(duration * 1000);
+      notesByTrackByTime.length = Math.round(song.duration * 1000);
       return notesByTrackByTime;
     }
   ).publishReplay();
