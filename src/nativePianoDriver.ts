@@ -33,46 +33,43 @@ export type PianoAndConnectionDriver = {
   pianoDriver(note$: Observable<Note>): void,
 }
 
+export const MIDICode = {
+  UP: 0b10000000,
+  DOWN: 0b10010000,
+}
+
 export default function makePianoAndConnectionDriver(): PianoAndConnectionDriver {
-  let piano$ = new Subject();
+  let piano$: Subject<WebMidi.MIDIOutput> = new Subject();
 
   return {
     pianoConnectionDriver(request$) {
       return request$.flatMap(
         () => Observable.create(
           (pianoAvailabilityObserver: Observer<any>) => {
-            if (WebMIDI.enabled) {
-              pianoAvailabilityObserver.next(true);
+            navigator.requestMIDIAccess().then(
+              function onSuccess(midi) {
+                if (midi.outputs.size) {
+                  const piano = midi.outputs.values().next().value;
+                  piano$.next(piano);
 
-            } else {
-              WebMIDI.enable(
-                (error: Error) => {
-                  if (error) {
-                    console.error(error);
-                    pianoAvailabilityObserver.next(false);
-                  } else {
-                    // TODO:
-                    // - Add a listener here to dispatch a not_connected_error
-                    //   whenever the piano becomes unavailable.
-                    // - If that doesn't work, check the piano's state in
-                    //   noteAndPiano$ and forward a message to the error stream if
-                    //   it's unavailable.
-                    const piano = WebMIDI.outputs[0];
-
-                    if (piano) {
-                      piano$.next(piano);
-                      pianoAvailabilityObserver.next(true);
-
-                    } else {
-                      pianoAvailabilityObserver.next(false);
-                      WebMIDI.disable();
+                  pianoAvailabilityObserver.next(true);
+                  piano.addEventListener(
+                    'statechange',
+                    (event: Event) => {
+                      pianoAvailabilityObserver.next(
+                        piano.state === 'connected'
+                      );
                     }
-                  }
-                  pianoAvailabilityObserver.complete();
+                  );
+                } else {
+                  pianoAvailabilityObserver.next(false);
                 }
-              );
-            }
-            pianoAvailabilityObserver.complete();
+              },
+
+              function onFailure() {
+                pianoAvailabilityObserver.next(false);
+              }
+            );
           }
         )
       ).distinctUntilChanged();
@@ -84,14 +81,28 @@ export default function makePianoAndConnectionDriver(): PianoAndConnectionDriver
       // received a note without a piano to play it on.
       note$.withLatestFrom(piano$).subscribe(
         ([ { note, duration, velocity, time }, piano ]) => {
-          piano.playNote(
-            note,
-            'all',
-            {
-              duration,
-              velocity,
-              time,
-            }
+          const velocity128 = Math.round(128 * velocity);
+
+          // MIDI down is 0x9 << 4 | channel, where channel is between 0x0 and
+          // 0xF.  Since the piano is on channel 0, we can ignore the channel.
+          //
+          // https://www.midi.org/specifications/item/table-1-summary-of-midi-message
+          piano.send(
+            [
+              MIDICode.DOWN,
+              note,
+              velocity128,
+            ],
+            time
+          );
+
+          piano.send(
+            [
+              MIDICode.UP,
+              note,
+              0,
+            ],
+            time + duration
           );
         }
       );

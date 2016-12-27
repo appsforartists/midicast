@@ -77,7 +77,7 @@ export default function Background({ messages: message$, pianoConnection: pianoA
     ).takeUntil(
       pianoIsOffline$
     )
-  ).map(
+  ).do(console.log).map(
     song => {
       const notesByTrackByTime:Dict<Dict<any>> = {};
       let duration = 0;
@@ -140,7 +140,7 @@ export default function Background({ messages: message$, pianoConnection: pianoA
         stopRequest$,
         pianoIsOffline$,
       )
-    ).do(console.log)
+    )
   );
 
   const songStopped$ = playCurrentTime$$.flatMap(

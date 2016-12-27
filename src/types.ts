@@ -45,6 +45,7 @@ export type Note = {
   note: number,
   velocity: number,
   duration: number,
+  time: number,
 }
 
 export type Tabs = {

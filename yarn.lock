@@ -48,6 +48,10 @@
   version "0.0.28"
   resolved "https://registry.yarnpkg.com/@types/filewriter/-/filewriter-0.0.28.tgz#c054e8af4d9dd75db4e63abc76f885168714d4b3"
 
+"@types/webmidi@^0.0.30":
+  version "0.0.30"
+  resolved "https://registry.yarnpkg.com/@types/webmidi/-/webmidi-0.0.30.tgz#6e8d4a3f2799bf21b20c9dcfcd06a983623692bb"
+
 "@types/whatwg-fetch@^0.0.33":
   version "0.0.33"
   resolved "https://registry.yarnpkg.com/@types/whatwg-fetch/-/whatwg-fetch-0.0.33.tgz#19c0d2863c8cb2380f21a1c736b79cbf7895bb13"
