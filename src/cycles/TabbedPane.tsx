@@ -67,7 +67,7 @@ export default function TabbedPane({ DOM, tabs: tabs$, ...sources }: Sources<any
     DOM: Observable.combineLatest(
       appBarElevation$,
       tabLabels$,
-      activeTab$.flatMap(tabSink => tabSink.DOM),
+      activeTab$.map(tabSink => tabSink.DOM).switch(),
       activeTabID$,
     ).map(
       ([
@@ -108,6 +108,7 @@ export default function TabbedPane({ DOM, tabs: tabs$, ...sources }: Sources<any
                         ? '2px solid var(--mdc-theme-accent)'
                         : ''
                     }
+                    cursor = 'pointer'
                     attrs = {
                       {
                         'data-id': i,
