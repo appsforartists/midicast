@@ -30,7 +30,6 @@ import {
   makeMessagesDriver,
 } from './extensionDrivers';
 
-const messagesDriver = makeMessagesDriver('background:popup');
 const {
   pianoDriver,
   pianoConnectionDriver,
@@ -42,7 +41,7 @@ if (location.href.includes('popup')) {
     {
       DOM: makeDOMDriver('#root'),
       hostPage: hostPageDriver,
-      messages: messagesDriver,
+      messages: makeMessagesDriver({ shouldInitiate: true }),
     }
   );
 
@@ -50,7 +49,7 @@ if (location.href.includes('popup')) {
   run(
     Background,
     {
-      messages: messagesDriver,
+      messages: makeMessagesDriver({ shouldInitiate: false }),
       piano: pianoDriver,
       pianoConnection: pianoConnectionDriver,
     }
