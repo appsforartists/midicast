@@ -38,6 +38,10 @@ export default function Background({ messages: message$, pianoConnection: pianoA
     (message: Message<any>) => message.type === MessageType.CHANGE_PLAYBACK_STATUS
   );
 
+  const updateStatusesRequest$ = message$.filter(
+    (message: Message<any>) => message.type === MessageType.UPDATE_STATUSES
+  );
+
   const playRequest$ = changeStatusRequest$.filter(
     (message: Message<PlaybackStatus>) => message.payload === PlaybackStatus.PLAYING
   );
@@ -162,24 +166,37 @@ export default function Background({ messages: message$, pianoConnection: pianoA
 
   const currentPlaybackStatus$ = playStartingTime$.mapTo(PlaybackStatus.PLAYING).merge(
     songStopped$.mapTo(PlaybackStatus.STOPPED)
+  ).startWith(PlaybackStatus.STOPPED);
+
+  const pianoAvailabilityMessage$ = pianoAvailability$.map(
+    isAvailable => (
+      {
+        type: MessageType.PIANO_AVAILABILITY_CHANGED,
+        payload: isAvailable,
+      }
+    )
+  );
+
+  const playbackStatusMessage$ = currentPlaybackStatus$.map(
+    status => (
+      {
+        type: MessageType.PLAYBACK_STATUS_CHANGED,
+        payload: status,
+      }
+    )
   );
 
   return {
     messages: Observable.merge(
-      pianoAvailability$.map(
-        isAvailable => (
-          {
-            type: MessageType.PIANO_AVAILABILITY_CHANGED,
-            payload: isAvailable,
-          }
-        )
-      ),
-      currentPlaybackStatus$.map(
-        status => (
-          {
-            type: MessageType.PLAYBACK_STATUS_CHANGED,
-            payload: status,
-          }
+      pianoAvailabilityMessage$,
+      playbackStatusMessage$,
+      updateStatusesRequest$.withLatestFrom(
+        pianoAvailabilityMessage$,
+        playbackStatusMessage$,
+      ).flatMap(
+        ([, pianoAvailability, playbackStatus ]) => Observable.of(
+          pianoAvailability,
+          playbackStatus,
         )
       ),
     ),
@@ -187,6 +204,6 @@ export default function Background({ messages: message$, pianoConnection: pianoA
     pianoConnection: Observable.merge(
       songRequest$,
       playRequest$,
-    )
+    ).startWith(undefined)
   }
 }

@@ -138,6 +138,11 @@ export default function Popup({ DOM, messages: message$, ...sources }: Sources<a
     messages: Observable.merge(
       tabbedPane.messages,
       changePlaybackStatus$,
+      Observable.of(
+        {
+          type: MessageType.UPDATE_STATUSES,
+        }
+      )
     )
   }
 }
