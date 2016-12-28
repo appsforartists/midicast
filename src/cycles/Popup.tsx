@@ -99,59 +99,65 @@ export default function Popup({ DOM, messages: message$, ...sources }: Sources<a
   });
   const tabbedPaneDOM$: Observable<VNode> = tabbedPane.DOM;
 
+  const playbackControlsDOM$ = currentSongName$.withLatestFrom(buttonIcon$).map(
+    ([
+      currentSongName,
+      buttonIcon,
+    ]) => (
+      <InflexibleColumn
+        backgroundColor = 'var(--mdc-theme-primary)'
+      >
+        <InflexibleRow
+          alignItems = 'center'
+          justifyContent = 'center'
+          height = { 72 }
+        >
+          <InflexibleRow
+            id = 'play-button'
+            className = { `mdc-elevation--z1` }
+            alignItems = 'center'
+            justifyContent = 'center'
+            width = { 56 }
+            height = { 56 }
+            borderRadius = { 48 }
+            backgroundColor = 'var(--mdc-theme-accent)'
+            color = 'var(--mdc-theme-primary)'
+            cursor = 'pointer'
+          >
+            <MaterialIcon>
+              { buttonIcon }
+            </MaterialIcon>
+          </InflexibleRow>
+        </InflexibleRow>
+        <InflexibleRow
+          color = 'var(--mdc-theme-accent)'
+          justifyContent = 'center'
+          fontSize = { 16 }
+          marginBottom = { 16 }
+        >
+          { currentSongName }
+        </InflexibleRow>
+      </InflexibleColumn>
+    )
+  );
+
   return {
     ...tabbedPane,
 
     DOM: Observable.combineLatest(
       tabbedPaneDOM$,
-      buttonIcon$,
-      currentSongName$.startWith(''),
+      playbackControlsDOM$.startWith(''),
     ).map(
       ([
         tabbedPaneDOM,
-        buttonIcon,
-        currentSongName,
+        playbackControlsDOM,
       ]) => (
         <Column
           className = 'mdc-theme--background'
           width = { 528 }
           height = { 600 }
         >
-          <InflexibleColumn
-            backgroundColor = 'var(--mdc-theme-primary)'
-          >
-            <InflexibleRow
-              alignItems = 'center'
-              justifyContent = 'center'
-              height = { 72 }
-            >
-              <InflexibleRow
-                id = 'play-button'
-                className = { `mdc-elevation--z1` }
-                alignItems = 'center'
-                justifyContent = 'center'
-                width = { 56 }
-                height = { 56 }
-                borderRadius = { 48 }
-                backgroundColor = 'var(--mdc-theme-accent)'
-                color = 'var(--mdc-theme-primary)'
-                cursor = 'pointer'
-              >
-                <MaterialIcon>
-                  { buttonIcon }
-                </MaterialIcon>
-              </InflexibleRow>
-            </InflexibleRow>
-            <InflexibleRow
-              color = 'var(--mdc-theme-accent)'
-              justifyContent = 'center'
-              fontSize = { 16 }
-              marginBottom = { 16 }
-            >
-              { currentSongName }
-            </InflexibleRow>
-          </InflexibleColumn>
-
+          { playbackControlsDOM }
           { tabbedPaneDOM }
         </Column>
       )

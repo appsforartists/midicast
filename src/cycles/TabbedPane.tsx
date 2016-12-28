@@ -88,15 +88,14 @@ export default function TabbedPane({ DOM, tabs: tabs$, ...sources }: Sources<any
                 (tabLabel, i) => (
                   <FlexibleRow
                     className = 'tab'
-                    alignItems = 'flex-end'
+                    alignItems = 'center'
                     justifyContent = 'center'
                     textTransform = 'uppercase'
                     maxWidth = { 264 }
                     height = { 48 }
                     paddingLeft = { 12 }
                     paddingRight = { 12 }
-                    paddingBottom = { 20 }
-                    fontSize = { 14 }
+                    fontSize = { 13 }
                     color = 'var(--mdc-theme-text-primary-on-dark)'
                     opacity = {
                       i === activeTabID
@@ -106,7 +105,7 @@ export default function TabbedPane({ DOM, tabs: tabs$, ...sources }: Sources<any
                     borderBottom = {
                       i === activeTabID
                         ? '2px solid var(--mdc-theme-accent)'
-                        : ''
+                        : '2px solid var(--mdc-theme-primary)'
                     }
                     cursor = 'pointer'
                     attrs = {
