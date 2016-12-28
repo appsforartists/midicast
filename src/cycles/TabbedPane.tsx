@@ -81,6 +81,7 @@ export default function TabbedPane({ DOM, tabs: tabs$, ...sources }: Sources<any
             className = { `mdc-elevation--z${ appBarElevation }` }
             justifyContent = 'flex-start'
             alignItems = 'stretch'
+            backgroundColor = 'var(--mdc-theme-primary)'
           >
             {
               tabLabels.map(
@@ -96,7 +97,7 @@ export default function TabbedPane({ DOM, tabs: tabs$, ...sources }: Sources<any
                     paddingRight = { 12 }
                     paddingBottom = { 20 }
                     fontSize = { 14 }
-                    color = 'var(--mdc-theme-text-primary-on-background)'
+                    color = 'var(--mdc-theme-text-primary-on-dark)'
                     opacity = {
                       i === activeTabID
                         ? 1
@@ -122,6 +123,8 @@ export default function TabbedPane({ DOM, tabs: tabs$, ...sources }: Sources<any
           <FlexibleRow
             id = 'scroll-pane'
             overflow = 'auto'
+            backgroundColor = 'var(--mdc-theme-background)'
+            color = 'var(--mdc-theme-text-primary-on-background)'
           >
             { activeTab }
           </FlexibleRow>

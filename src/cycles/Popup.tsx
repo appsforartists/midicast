@@ -25,6 +25,7 @@ import {
 
 import {
   Column,
+  InflexibleColumn,
   InflexibleRow,
   MaterialIcon,
   Row,
@@ -113,38 +114,43 @@ export default function Popup({ DOM, messages: message$, ...sources }: Sources<a
       ]) => (
         <Column
           className = 'mdc-theme--background'
-          width = { 600 }
+          width = { 528 }
           height = { 600 }
         >
-          <InflexibleRow
-            alignItems = 'center'
-            justifyContent = 'center'
-            height = { 72 }
+          <InflexibleColumn
+            backgroundColor = 'var(--mdc-theme-primary)'
           >
             <InflexibleRow
-              id = 'play-button'
-              className = { `mdc-elevation--z1` }
               alignItems = 'center'
               justifyContent = 'center'
-              width = { 56 }
-              height = { 56 }
-              borderRadius = { 48 }
-              backgroundColor = 'var(--mdc-theme-accent)'
-              color = 'var(--mdc-theme-background)'
-              cursor = 'pointer'
+              height = { 72 }
             >
-              <MaterialIcon>
-                { buttonIcon }
-              </MaterialIcon>
+              <InflexibleRow
+                id = 'play-button'
+                className = { `mdc-elevation--z1` }
+                alignItems = 'center'
+                justifyContent = 'center'
+                width = { 56 }
+                height = { 56 }
+                borderRadius = { 48 }
+                backgroundColor = 'var(--mdc-theme-accent)'
+                color = 'var(--mdc-theme-primary)'
+                cursor = 'pointer'
+              >
+                <MaterialIcon>
+                  { buttonIcon }
+                </MaterialIcon>
+              </InflexibleRow>
             </InflexibleRow>
-          </InflexibleRow>
-          <InflexibleRow
-            color = 'var(--mdc-theme-accent)'
-            justifyContent = 'center'
-            fontSize = { 16 }
-          >
-            { currentSongName }
-          </InflexibleRow>
+            <InflexibleRow
+              color = 'var(--mdc-theme-accent)'
+              justifyContent = 'center'
+              fontSize = { 16 }
+              marginBottom = { 16 }
+            >
+              { currentSongName }
+            </InflexibleRow>
+          </InflexibleColumn>
 
           { tabbedPaneDOM }
         </Column>
