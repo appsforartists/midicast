@@ -123,8 +123,6 @@ export default function TabbedPane({ DOM, tabs: tabs$, ...sources }: Sources<any
           <FlexibleRow
             id = 'scroll-pane'
             overflow = 'auto'
-            backgroundColor = 'var(--mdc-theme-background)'
-            color = 'var(--mdc-theme-text-primary-on-background)'
           >
             { activeTab }
           </FlexibleRow>
