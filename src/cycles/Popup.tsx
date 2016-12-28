@@ -33,6 +33,7 @@ import {
 import {
   MessageType,
   PlaybackStatus,
+  Song,
   Sources,
   Sinks,
 } from '../types';
@@ -47,6 +48,10 @@ export default function Popup({ DOM, messages: message$, ...sources }: Sources<a
     message => message.type === MessageType.PLAYBACK_STATUS_CHANGED
   ).pluck('payload').startWith(PlaybackStatus.STOPPED);
 
+  const currentSongName$: Observable<Song> = message$.filter(
+    message => message.type === MessageType.SONG_CHANGED
+  ).pluck('payload').pluck('name');
+
   const buttonAction$ = currentPlaybackStatus$.map(
     currentPlaybackStatus => {
       if (currentPlaybackStatus === PlaybackStatus.PLAYING) {
@@ -58,9 +63,9 @@ export default function Popup({ DOM, messages: message$, ...sources }: Sources<a
   );
 
   const changePlaybackStatus$ = DOM.select('#play-button').events('click').withLatestFrom(
-    buttonAction$
-  // Play isn't implemented yet, so only send Stop
-  ).map(([, action]) => action).filter(action => action === PlaybackStatus.STOPPED).map(
+    buttonAction$,
+    currentSongName$, // Don't send unless there's a song to play
+  ).map(([, action]) => action).map(
     (requestedStatus) => (
       {
         type: MessageType.CHANGE_PLAYBACK_STATUS,
@@ -98,10 +103,12 @@ export default function Popup({ DOM, messages: message$, ...sources }: Sources<a
     DOM: Observable.combineLatest(
       tabbedPaneDOM$,
       buttonIcon$,
+      currentSongName$.startWith(''),
     ).map(
       ([
         tabbedPaneDOM,
         buttonIcon,
+        currentSongName,
       ]) => (
         <Column
           className = 'mdc-theme--background'
@@ -129,6 +136,13 @@ export default function Popup({ DOM, messages: message$, ...sources }: Sources<a
                 { buttonIcon }
               </MaterialIcon>
             </InflexibleRow>
+          </InflexibleRow>
+          <InflexibleRow
+            color = 'var(--mdc-theme-accent)'
+            justifyContent = 'center'
+            fontSize = { 16 }
+          >
+            { currentSongName }
           </InflexibleRow>
 
           { tabbedPaneDOM }

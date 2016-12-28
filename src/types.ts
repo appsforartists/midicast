@@ -32,6 +32,7 @@ export enum MessageType {
   ERROR,
   PLAY_SONG,
   CHANGE_PLAYBACK_STATUS,
+  SONG_CHANGED,
   PLAYBACK_STATUS_CHANGED,
   PIANO_AVAILABILITY_CHANGED,
   UPDATE_STATUSES
@@ -47,6 +48,11 @@ export type Note = {
   velocity: number,
   duration: number,
   time: number,
+}
+
+export type Song = {
+  label: string,
+  url: string,
 }
 
 export type Tabs = {

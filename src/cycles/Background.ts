@@ -15,6 +15,7 @@
  */
 
 import {
+  ConnectableObservable,
   Observable,
 } from 'rxjs';
 
@@ -26,11 +27,14 @@ import {
   MessageType,
   PlaybackStatus,
   Sinks,
+  Song,
   Sources,
 } from '../types';
 
+type NamedMIDI = MIDIConvert.MIDI & { name: string };
+
 export default function Background({ messages: message$, pianoConnection: pianoAvailability$ }: Sources<any>): Sinks {
-  const songRequest$ = message$.filter(
+  const songRequest$: Observable<Song> = message$.filter(
     (message: Message<any>) => message.type === MessageType.PLAY_SONG
   ).pluck('payload');
 
@@ -54,23 +58,22 @@ export default function Background({ messages: message$, pianoConnection: pianoA
     isAvailable => isAvailable == false
   );
 
-  // `song$` dispatches values in the shape:
-  //
-  //   {
-  //     [time]: {
-  //       [trackID]: note,
-  //     },
-  //   }
-  //
-  // so we can queue notes in decisecond increments and change which tracks are
-  // included as the song is playing.
-
-  const song$ = songRequest$.flatMap(
-    (url: string) => Observable.fromPromise(
+  const midiSong$: ConnectableObservable<NamedMIDI> = songRequest$.flatMap(
+    ({ url, label }) => Observable.fromPromise(
       fetch(url).then(
         (response: Response) => response.arrayBuffer()
       ).then(
         MIDIConvert.parse
+      ).then(
+        (midi: NamedMIDI) => {
+          if (midi.tracks[0].name && !midi.tracks[0].notes.length) {
+            midi.name = midi.tracks[0].name;
+          } else {
+            midi.name = label;
+          }
+
+          return midi;
+        }
       )
     // Prevent Promise errors from breaking the stream
     ).catch(
@@ -81,26 +84,45 @@ export default function Background({ messages: message$, pianoConnection: pianoA
     ).takeUntil(
       pianoIsOffline$
     )
-  ).do(console.log).map(
-    (song: MIDIConvert.MIDI) => {
-      const notesByTrackByTime:Dict<Dict<any>> = {};
+  ).publishReplay();
+
+  // Streams that represent properties (as opposed to events) should be
+  // memoized.  In xstream, you'd accomplish this with a MemoryStream.  The
+  // equivalent in RxJS is a publishReplay() + connect().  connect returns a
+  // subscription, so we have to do it on its own line.
+  midiSong$.connect();
+
+  // `notesByTrackIDByTime$` dispatches values in the shape:
+  //
+  //   {
+  //     [time]: {
+  //       [trackID]: note,
+  //     },
+  //   }
+  //
+  // so we can queue notes in decisecond increments and change which tracks are
+  // included as the song is playing.
+
+  const notesByTrackIDByTime$ = midiSong$.do(console.log).map(
+    (namedMIDI: NamedMIDI) => {
+      const notesByTrackIDByTime:Dict<Dict<any>> = {};
       let duration = 0;
 
-      song.tracks.forEach(
+      namedMIDI.tracks.forEach(
         (track, trackID) => track.notes.forEach(
           note => {
             const time = note.time * 1000;
             const roundedTime = Math.floor(note.time * 10) * 100;
 
-            if (!notesByTrackByTime[roundedTime]) {
-              notesByTrackByTime[roundedTime] = {};
+            if (!notesByTrackIDByTime[roundedTime]) {
+              notesByTrackIDByTime[roundedTime] = {};
             }
 
-            if (!notesByTrackByTime[roundedTime][trackID]) {
-              notesByTrackByTime[roundedTime][trackID] = [];
+            if (!notesByTrackIDByTime[roundedTime][trackID]) {
+              notesByTrackIDByTime[roundedTime][trackID] = [];
             }
 
-            notesByTrackByTime[roundedTime][trackID].push(
+            notesByTrackIDByTime[roundedTime][trackID].push(
               {
                 note: note.midi,
                 duration: note.duration * 1000,
@@ -112,27 +134,19 @@ export default function Background({ messages: message$, pianoConnection: pianoA
         )
       );
 
-      notesByTrackByTime.length = Math.round(song.duration * 1000);
-      return notesByTrackByTime;
+      return notesByTrackIDByTime;
     }
-  ).publishReplay();
+  );
 
-  // Streams that represent properties (as opposed to events) should be
-  // memoized.  In xstream, you'd accomplish this with a MemoryStream.  The
-  // equivalent in RxJS is a publishReplay() + connect().  connect returns a
-  // subscription, so we have to do it on its own line.
-  song$.connect();
-
-  const playStartingTime$ = Observable.merge(playRequest$, song$).map(
+  const playStartingTime$ = Observable.merge(playRequest$, notesByTrackIDByTime$).map(
     () => performance.now()
   );
 
-  // takeUntil doesn't seem to be working as you'd expect it to.
   const playCurrentTime$$ = playStartingTime$.map(
     startingTime => Observable.interval(100).map(
       count => count * 100
-    ).withLatestFrom(song$).takeWhile(
-      ([ time, song ]) => song.length > time
+    ).withLatestFrom(midiSong$).takeWhile(
+      ([ time, midiSong ]) => midiSong.duration * 1000 > time
     ).map(
       ([ time ]) => time
     ).takeUntil(
@@ -147,7 +161,7 @@ export default function Background({ messages: message$, pianoConnection: pianoA
     interval$ => interval$.last()
   );
 
-  const note$ = playCurrentTime$$.switch().withLatestFrom(song$).map(
+  const note$ = playCurrentTime$$.switch().withLatestFrom(notesByTrackIDByTime$).map(
     ([ time, song ]) => song[time]
   ).filter(
     value => value !== undefined
@@ -169,34 +183,35 @@ export default function Background({ messages: message$, pianoConnection: pianoA
   ).startWith(PlaybackStatus.STOPPED);
 
   const pianoAvailabilityMessage$ = pianoAvailability$.map(
-    isAvailable => (
-      {
-        type: MessageType.PIANO_AVAILABILITY_CHANGED,
-        payload: isAvailable,
-      }
-    )
+    wrapWithMessage(MessageType.PIANO_AVAILABILITY_CHANGED)
   );
 
   const playbackStatusMessage$ = currentPlaybackStatus$.map(
-    status => (
-      {
-        type: MessageType.PLAYBACK_STATUS_CHANGED,
-        payload: status,
-      }
-    )
+    wrapWithMessage(MessageType.PLAYBACK_STATUS_CHANGED)
+  );
+
+  const songChangedMessage$ = midiSong$.map(
+    wrapWithMessage(MessageType.SONG_CHANGED)
   );
 
   return {
     messages: Observable.merge(
       pianoAvailabilityMessage$,
       playbackStatusMessage$,
+      songChangedMessage$,
       updateStatusesRequest$.withLatestFrom(
         pianoAvailabilityMessage$,
         playbackStatusMessage$,
+        songChangedMessage$,
       ).flatMap(
-        ([, pianoAvailability, playbackStatus ]) => Observable.of(
-          pianoAvailability,
-          playbackStatus,
+        ([,
+          pianoAvailabilityMessage,
+          playbackStatusMessage,
+          songChangedMessage,
+        ]) => Observable.of(
+          pianoAvailabilityMessage,
+          playbackStatusMessage,
+          songChangedMessage,
         )
       ),
     ),
@@ -207,3 +222,12 @@ export default function Background({ messages: message$, pianoConnection: pianoA
     ).startWith(undefined)
   }
 }
+
+function wrapWithMessage<T>(type: MessageType): (type: T) => Message<T> {
+  return function (payload) {
+    return {
+      type,
+      payload
+    };
+  }
+};

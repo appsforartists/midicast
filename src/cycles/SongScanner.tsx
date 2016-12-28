@@ -24,6 +24,7 @@ import {
   Message,
   MessageType,
   Sinks,
+  Song,
   Sources,
 } from '../types';
 
@@ -38,8 +39,12 @@ export type MIDILink = {
 };
 
 export default function SongScanner({ DOM, hostPage: midiLinks$, messages: message$ }: Sources<Array<MIDILink>>): Sinks {
-  const selectedSongURL$ = DOM.select('.song-link').events('click').map(
-    event => event.currentTarget.dataset.href
+  const selectedSong$: Observable<Song> = DOM.select('.song-link').events('click').map(
+    event => (
+      {
+        ...(event.currentTarget as HTMLElement).dataset,
+      }
+    )
   );
 
   const vtree$ = midiLinks$.map(
@@ -62,7 +67,8 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
                       cursor = 'pointer'
                       attrs = {
                         {
-                          'data-href': url,
+                          'data-label': label,
+                          'data-url': url,
                         }
                       }
                     >
@@ -100,11 +106,11 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
         )
       `
     ),
-    messages: selectedSongURL$.map(
-      url => (
+    messages: selectedSong$.map(
+      song => (
         {
           type: MessageType.PLAY_SONG,
-          payload: url,
+          payload: song,
         }
       ),
     )
