@@ -47,42 +47,41 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
     )
   );
 
-  const vtree$ = midiLinks$.map(
-    (midiLinks) => (
-      <InflexibleColumn
-        component = 'ul'
-        className = 'mdc-list'
-        minWidth = '100%'
-      >
-        {
-          !midiLinks
-            ? ''
-            : midiLinks.length === 0
-              ? 'No songs found.'
-              : midiLinks.map(
-                  ({ label, url }) => (
-                    <InflexibleRow
-                      component = 'li'
-                      className = 'song-link mdc-list-item'
-                      cursor = 'pointer'
-                      attrs = {
-                        {
-                          'data-label': label,
-                          'data-url': url,
-                        }
-                      }
-                    >
-                      { label }
-                    </InflexibleRow>
-                  )
-                )
-        }
-      </InflexibleColumn>
-    )
-  );
-
   return {
-    DOM: vtree$,
+    DOM: midiLinks$.map(
+      (midiLinks) => (
+        <InflexibleColumn
+          component = 'ul'
+          className = 'mdc-list'
+          minWidth = '100%'
+        >
+          {
+            !midiLinks
+              ? ''
+              : midiLinks.length === 0
+                ? 'No songs found.'
+                : midiLinks.map(
+                    ({ label, url }) => (
+                      <InflexibleRow
+                        component = 'li'
+                        className = 'song-link mdc-list-item'
+                        cursor = 'pointer'
+                        attrs = {
+                          {
+                            'data-label': label,
+                            'data-url': url,
+                          }
+                        }
+                      >
+                        { label }
+                      </InflexibleRow>
+                    )
+                  )
+          }
+        </InflexibleColumn>
+      )
+    ),
+
     hostPage: Observable.of(
       `
         Array.from(document.getElementsByTagName('a')).filter(
@@ -106,6 +105,7 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
         )
       `
     ),
+
     messages: selectedSong$.map(
       song => (
         {

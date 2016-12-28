@@ -100,6 +100,7 @@ export default function Popup({ DOM, messages: message$, ...sources }: Sources<a
 
   return {
     ...tabbedPane,
+
     DOM: Observable.combineLatest(
       tabbedPaneDOM$,
       buttonIcon$,
@@ -149,6 +150,7 @@ export default function Popup({ DOM, messages: message$, ...sources }: Sources<a
         </Column>
       )
     ),
+
     messages: Observable.merge(
       tabbedPane.messages,
       changePlaybackStatus$,
