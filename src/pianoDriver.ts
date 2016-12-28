@@ -82,28 +82,31 @@ export default function makePianoAndConnectionDriver(): PianoAndConnectionDriver
       note$.withLatestFrom(piano$).subscribe(
         ([ { note, duration, velocity, time }, piano ]) => {
           const velocity128 = Math.round(128 * velocity);
+          try {
+            // MIDI down is 0x9 << 4 | channel, where channel is between 0x0 and
+            // 0xF.  Since the piano is on channel 0, we can ignore the channel.
+            //
+            // https://www.midi.org/specifications/item/table-1-summary-of-midi-message
+            piano.send(
+              [
+                MIDICode.DOWN,
+                note,
+                velocity128,
+              ],
+              time
+            );
 
-          // MIDI down is 0x9 << 4 | channel, where channel is between 0x0 and
-          // 0xF.  Since the piano is on channel 0, we can ignore the channel.
-          //
-          // https://www.midi.org/specifications/item/table-1-summary-of-midi-message
-          piano.send(
-            [
-              MIDICode.DOWN,
-              note,
-              velocity128,
-            ],
-            time
-          );
-
-          piano.send(
-            [
-              MIDICode.UP,
-              note,
-              0,
-            ],
-            time + duration
-          );
+            piano.send(
+              [
+                MIDICode.UP,
+                note,
+                0,
+              ],
+              time + duration
+            );
+          } catch (error) {
+            console.error(error, note, time);
+          }
         }
       );
     }
