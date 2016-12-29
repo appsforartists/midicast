@@ -14,6 +14,8 @@
  *  under the License.
  */
 
+import * as MIDIConvert from 'midiconvert';
+
 import { DOMSource } from '@cycle/dom/rxjs-typings';
 import { VNode } from '@cycle/dom';
 
@@ -23,17 +25,20 @@ import {
 
 // TS doesn't like trailing commas in enums
 export enum PlaybackStatus {
-  PLAYING,
   STOPPED,
-  PAUSED
+  PAUSED,
+  PLAYING
 }
 
 export enum MessageType {
   ERROR,
   PLAY_SONG,
   CHANGE_PLAYBACK_STATUS,
+  CHANGE_TRACK_ACTIVE_STATUS,
+  CHANGE_ACTIVE_TRACKS,
   SONG_CHANGED,
   PLAYBACK_STATUS_CHANGED,
+  ACTIVE_TRACKS_CHANGED,
   PIANO_AVAILABILITY_CHANGED,
   UPDATE_STATUSES
 }
@@ -49,6 +54,11 @@ export type Note = {
   duration: number,
   time: number,
 }
+
+export type NamedMIDI = MIDIConvert.MIDI & {
+  name: string,
+  tracks: Array<{ id: number }>,
+};
 
 export type Song = {
   label: string,

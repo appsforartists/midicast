@@ -17,6 +17,7 @@
 import {
   ConnectableObservable,
   Observable,
+  Subject,
 } from 'rxjs';
 
 import * as MIDIConvert from 'midiconvert';
@@ -25,13 +26,12 @@ import {
   Dict,
   Message,
   MessageType,
+  NamedMIDI,
   PlaybackStatus,
   Sinks,
   Song,
   Sources,
 } from '../types';
-
-type NamedMIDI = MIDIConvert.MIDI & { name: string };
 
 export default function Background({ messages: message$, pianoConnection: pianoAvailability$ }: Sources<any>): Sinks {
   const songRequest$: Observable<Song> = message$.filter(
@@ -40,18 +40,26 @@ export default function Background({ messages: message$, pianoConnection: pianoA
 
   const changeStatusRequest$ = message$.filter(
     (message: Message<any>) => message.type === MessageType.CHANGE_PLAYBACK_STATUS
-  );
+  ).pluck('payload');
+
+  const changeTrackActiveStatusRequest$ = message$.filter(
+    (message: Message<any>) => message.type === MessageType.CHANGE_TRACK_ACTIVE_STATUS
+  ).pluck('payload');
+
+  const changeActiveTracksRequest$ = message$.filter(
+    (message: Message<any>) => message.type === MessageType.CHANGE_ACTIVE_TRACKS
+  ).pluck('payload');
 
   const updateStatusesRequest$ = message$.filter(
     (message: Message<any>) => message.type === MessageType.UPDATE_STATUSES
-  );
+  ).pluck('payload');
 
   const playRequest$ = changeStatusRequest$.filter(
-    (message: Message<PlaybackStatus>) => message.payload === PlaybackStatus.PLAYING
+    (status: PlaybackStatus) => status === PlaybackStatus.PLAYING
   );
 
   const stopRequest$ = changeStatusRequest$.filter(
-    (message: Message<PlaybackStatus>) => message.payload === PlaybackStatus.STOPPED
+    (status: PlaybackStatus) => status === PlaybackStatus.STOPPED
   );
 
   const pianoIsOffline$ = pianoAvailability$.filter(
@@ -71,6 +79,12 @@ export default function Background({ messages: message$, pianoConnection: pianoA
           } else {
             midi.name = label;
           }
+
+          midi.tracks.forEach(
+            (track, i) => {
+              track.id = i;
+            }
+          )
 
           return midi;
         }
@@ -103,7 +117,7 @@ export default function Background({ messages: message$, pianoConnection: pianoA
   // so we can queue notes in decisecond increments and change which tracks are
   // included as the song is playing.
 
-  const notesByTrackIDByTime$ = midiSong$.do(console.log).map(
+  const notesByTrackIDByTime$ = midiSong$.map(
     (namedMIDI: NamedMIDI) => {
       const notesByTrackIDByTime:Dict<Dict<any>> = {};
       let duration = 0;
@@ -161,14 +175,83 @@ export default function Background({ messages: message$, pianoConnection: pianoA
     interval$ => interval$.last()
   );
 
+  const activeTrackIDProxy: Subject<Array<number>> = new Subject();
+
+  const allTrackIDs$: Observable<Array<number>> = midiSong$.map(
+    (song: NamedMIDI) => song.tracks.map(track => track.id)
+  );
+
+  const activeTrackIDs$ = Observable.merge(
+    allTrackIDs$,
+    changeTrackActiveStatusRequest$.withLatestFrom(activeTrackIDProxy).map(
+      ([ request, activeTrackIDs ]) => {
+        if (request.active) {
+          return [...activeTrackIDs, request.id];
+
+        } else {
+          return activeTrackIDs.filter(id => id !== request.id);
+        }
+      }
+    ),
+    changeActiveTracksRequest$.withLatestFrom(activeTrackIDProxy, midiSong$).map(
+      ([ { query, active }, oldActiveTrackIDs, song ]) => {
+        let activeTrackIDs: Array<number>;
+
+        if (query === 'all') {
+          if (active) {
+            activeTrackIDs = song.tracks.map(
+              track => track.id
+            );
+          } else {
+            activeTrackIDs = [];
+          }
+        } else {
+          const queryPieces:Array<string> = query.toLowerCase().split(',');
+
+          if (active) {
+            activeTrackIDs = song.tracks.filter(
+              track => queryPieces.some(
+                (queryPiece: string) => track.name.toLowerCase().includes(queryPiece)
+              )
+            ).map(
+              track => track.id
+            );
+
+            oldActiveTrackIDs.forEach(
+              id => {
+                if (!activeTrackIDs.includes(id)) {
+                  activeTrackIDs.push(id);
+                }
+              }
+            );
+          } else {
+            activeTrackIDs = oldActiveTrackIDs.filter(
+              id => !queryPieces.some(
+                (queryPiece: string) => song.tracks[id].name.toLowerCase().includes(queryPiece)
+              )
+            );
+          }
+        }
+
+        return activeTrackIDs;
+      }
+    )
+  );
+
+  activeTrackIDs$.subscribe(activeTrackIDProxy);
+
   const note$ = playCurrentTime$$.switch().withLatestFrom(notesByTrackIDByTime$).map(
-    ([ time, song ]) => song[time]
+    ([ time, notesByTrackIDByTime ]) => notesByTrackIDByTime[time]
   ).filter(
     value => value !== undefined
-  ).flatMap(
-    notesByTrack => Observable.of(
-      ...[].concat(...Object.values(notesByTrack))
+  ).withLatestFrom(activeTrackIDs$).flatMap(
+    ([ notesByTrackID, activeTrackIDs ]) => Observable.of(
+      ...[].concat(
+        ...activeTrackIDs.map(trackID => notesByTrackID[trackID])
+      )
     )
+  ).filter(
+    value => value !== undefined
   ).withLatestFrom(playStartingTime$).map(
     ([ note, startTime ]) => (
       {
@@ -176,17 +259,17 @@ export default function Background({ messages: message$, pianoConnection: pianoA
         time: startTime + note.time,
       }
     )
-  ).do(console.log);
+  );
 
   const currentPlaybackStatus$ = playStartingTime$.mapTo(PlaybackStatus.PLAYING).merge(
     songStopped$.mapTo(PlaybackStatus.STOPPED)
   ).startWith(PlaybackStatus.STOPPED);
 
-  const pianoAvailabilityMessage$ = pianoAvailability$.map(
+  const pianoAvailabilityChangedMessage$ = pianoAvailability$.map(
     wrapWithMessage(MessageType.PIANO_AVAILABILITY_CHANGED)
   );
 
-  const playbackStatusMessage$ = currentPlaybackStatus$.map(
+  const playbackStatusChangedMessage$ = currentPlaybackStatus$.map(
     wrapWithMessage(MessageType.PLAYBACK_STATUS_CHANGED)
   );
 
@@ -194,24 +277,33 @@ export default function Background({ messages: message$, pianoConnection: pianoA
     wrapWithMessage(MessageType.SONG_CHANGED)
   );
 
+  const activeTracksChangedMessage$ = activeTrackIDs$.map(
+    wrapWithMessage(MessageType.ACTIVE_TRACKS_CHANGED)
+  );
+
   return {
+    // TODO: abstract this pattern into something less repetitive
     messages: Observable.merge(
-      pianoAvailabilityMessage$,
-      playbackStatusMessage$,
+      pianoAvailabilityChangedMessage$,
+      playbackStatusChangedMessage$,
       songChangedMessage$,
+      activeTracksChangedMessage$,
       updateStatusesRequest$.withLatestFrom(
-        pianoAvailabilityMessage$,
-        playbackStatusMessage$,
+        pianoAvailabilityChangedMessage$,
+        playbackStatusChangedMessage$,
         songChangedMessage$,
+        activeTracksChangedMessage$,
       ).flatMap(
         ([,
           pianoAvailabilityMessage,
           playbackStatusMessage,
           songChangedMessage,
+          activeTracksChangedMessage,
         ]) => Observable.of(
           pianoAvailabilityMessage,
           playbackStatusMessage,
           songChangedMessage,
+          activeTracksChangedMessage,
         )
       ),
     ),
@@ -223,11 +315,12 @@ export default function Background({ messages: message$, pianoConnection: pianoA
   }
 }
 
-function wrapWithMessage<T>(type: MessageType): (type: T) => Message<T> {
+export function wrapWithMessage<T>(type: MessageType): (type: T) => Message<T> {
   return function (payload) {
     return {
       type,
-      payload
+      payload,
     };
   }
 };
+

@@ -143,6 +143,28 @@ export function FlexibleColumn(props: Props, children: Array<VNode>) {
   );
 }
 
+export function CenteredRow(props: Props, children: Array<VNode>) {
+  return Row(
+    {
+      justifyContent: 'center',
+      alignItems: 'center',
+      ...props,
+    },
+    children
+  );
+}
+
+export function CenteredColumn(props: Props, children: Array<VNode>) {
+  return Column(
+    {
+      justifyContent: 'center',
+      alignItems: 'center',
+      ...props,
+    },
+    children
+  );
+}
+
 export function MaterialIcon(props: Props, children: Array<VNode>) {
   return Block(
     {
