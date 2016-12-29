@@ -29,6 +29,7 @@ import {
 } from '../types';
 
 import {
+  Column,
   InflexibleColumn,
   InflexibleRow,
 } from '../snabstyle';
@@ -55,7 +56,22 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
             !midiLinks
               ? ''
               : midiLinks.length === 0
-                ? 'No songs found.'
+                ? <Column
+                  >
+                    <p
+                      className = 'mdc-typography--headline'
+                      style = {
+                        {
+                          textAlign: 'center'
+                        }
+                      }
+                    >
+                      No songs found on this page.
+                    </p>
+                    <p>
+                      Try pasting one into the box on the <strong>Enter song</strong> tab.
+                    </p>
+                  </Column>
                 : midiLinks.map(
                     ({ label, url }) => (
                       <InflexibleRow

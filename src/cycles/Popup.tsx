@@ -39,8 +39,9 @@ import {
   Sinks,
 } from '../types';
 
-import TabbedPane from './TabbedPane';
+import EnterURL from './EnterURL';
 import SongScanner from './SongScanner';
+import TabbedPane from './TabbedPane';
 import TrackSelector from './TrackSelector';
 
 export default function Popup({ DOM, messages: message$, ...sources }: Sources<any>): Sinks {
@@ -92,6 +93,10 @@ export default function Popup({ DOM, messages: message$, ...sources }: Sources<a
         {
           label: 'songs on this page',
           component: SongScanner,
+        },
+        {
+          label: 'enter song by url',
+          component: EnterURL,
         },
         {
           label: 'instruments',
