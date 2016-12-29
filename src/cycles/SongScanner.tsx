@@ -40,11 +40,7 @@ export type MIDILink = {
 
 export default function SongScanner({ DOM, hostPage: midiLinks$, messages: message$ }: Sources<Array<MIDILink>>): Sinks {
   const selectedSong$: Observable<Song> = DOM.select('.song-link').events('click').map(
-    event => (
-      {
-        ...(event.currentTarget as HTMLElement).dataset,
-      }
-    )
+    event => (event.currentTarget as HTMLElement).dataset,
   );
 
   return {
