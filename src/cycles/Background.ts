@@ -161,9 +161,7 @@ export default function Background({ messages: message$, pianoConnection: pianoA
       count => count * 100
     ).withLatestFrom(midiSong$).takeWhile(
       ([ time, midiSong ]) => midiSong.duration * 1000 > time
-    ).map(
-      ([ time ]) => time
-    ).takeUntil(
+    ).pluck(0).takeUntil(
       Observable.merge(
         stopRequest$,
         pianoIsOffline$,
