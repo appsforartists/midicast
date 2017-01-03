@@ -40,12 +40,15 @@ export default function EnterURL({ DOM, messages: message$, ...sources }: Source
     (event) => (event.target as HTMLInputElement).value
   );
 
-  const requestSong$: Observable<Song> = Observable.merge(
-    DOM.select('#play-url').events('click'),
-    DOM.select('#url').events('keyup').filter(
-      (event: KeyboardEvent) => event.key === 'Enter'
-    )
-  ).withLatestFrom(input$).pluck(1).filter(
+  const requestSong$: Observable<Song> = Observable.combineLatest(
+    Observable.merge(
+      DOM.select('#play-url').events('click'),
+      DOM.select('#url').events('keyup').filter(
+        (event: KeyboardEvent) => event.key === 'Enter'
+      )
+    ),
+    input$
+  ).pluck(1).filter(
     url => url.length
   ).map(
     url => (
