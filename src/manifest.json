@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "Midiano",
+  "name": "Midicast",
   "version": "0.1",
   "content_security_policy": "script-src 'self' 'unsafe-eval' http://localhost:8080/dist/bundle.js; object-src 'self'",
   "background": {
