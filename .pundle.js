@@ -22,9 +22,7 @@ module.exports = {
   presets: [
     [
       require.resolve('pundle-preset-default'),
-      {
-        // Put any preset config here
-      }
+      {},
     ],
     [
       require.resolve('pundle-preset-typescript'),
@@ -36,7 +34,7 @@ module.exports = {
           extensions: ['js', 'jsx', 'ts', 'tsx'],
           config: { compilerOptions },
         },
-      }
+      },
     ],
   ],
-}
+};

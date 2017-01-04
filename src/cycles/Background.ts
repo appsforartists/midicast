@@ -63,7 +63,7 @@ export default function Background({ messages: message$, pianoConnection: pianoA
   );
 
   const pianoIsOffline$ = pianoAvailability$.filter(
-    isAvailable => isAvailable == false
+    isAvailable => isAvailable === false
   );
 
   const midiSong$: ConnectableObservable<NamedMIDI> = songRequest$.flatMap(
@@ -84,7 +84,7 @@ export default function Background({ messages: message$, pianoConnection: pianoA
             (track, i) => {
               track.id = i;
             }
-          )
+          );
 
           return midi;
         }
@@ -310,7 +310,7 @@ export default function Background({ messages: message$, pianoConnection: pianoA
       songRequest$,
       playRequest$,
     ).startWith(undefined)
-  }
+  };
 }
 
 export function wrapWithMessage<T>(type: MessageType): (type: T) => Message<T> {
@@ -319,6 +319,6 @@ export function wrapWithMessage<T>(type: MessageType): (type: T) => Message<T> {
       type,
       payload,
     };
-  }
+  };
 };
 

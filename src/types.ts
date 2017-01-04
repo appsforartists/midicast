@@ -28,7 +28,7 @@ export enum PlaybackStatus {
   STOPPED,
   PAUSED,
   PLAYING
-}
+};
 
 export enum MessageType {
   ERROR,
@@ -41,19 +41,19 @@ export enum MessageType {
   ACTIVE_TRACKS_CHANGED,
   PIANO_AVAILABILITY_CHANGED,
   UPDATE_STATUSES
-}
+};
 
 export type Message<T> = {
   type: MessageType,
   payload: T
-}
+};
 
 export type Note = {
   note: number,
   velocity: number,
   duration: number,
   time: number,
-}
+};
 
 export type NamedMIDI = MIDIConvert.MIDI & {
   name: string,
@@ -63,22 +63,19 @@ export type NamedMIDI = MIDIConvert.MIDI & {
 export type Song = {
   label: string,
   url: string,
-}
+};
 
 export type Tabs = {
   label: string,
   component(sources: Sources<any>): Sinks,
-}
+};
 
 export type Sources<T> = {
   DOM: DOMSource,
   hostPage: Observable<T>,
   messages: Observable<Message<any>>,
   pianoConnection: Observable<boolean>,
-}
-
-// export type Sources = Dict<DOMSource | Observable<any>>;
-// export type Sinks = Dict<Observable<any>>;
+};
 
 export type Sinks = {
   DOM: Observable<VNode>,
@@ -86,8 +83,8 @@ export type Sinks = {
   messages: Observable<Message<any>>,
   piano: Observable<Note>,
   pianoConnection: Observable<any>,
-}
+};
 
 export type Dict<T> = {
   [key: string]: T,
-}
+};

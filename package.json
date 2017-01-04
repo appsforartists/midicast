@@ -2,7 +2,8 @@
   "name": "midicast",
   "version": "1.0.0",
   "scripts": {
-    "start": "$( yarn bin )/pundle --dev --dev-directory src"
+    "start": "$( yarn bin )/pundle --dev --dev-directory src",
+    "lint": "$( yarn bin )/tslint -c ./tslint.json --project tsconfig.json"
   },
   "description": "Stream MIDI files to a MIDI instrument, like a player piano",
   "main": "dist/index.js",
@@ -25,6 +26,7 @@
     "pundle-dev": "^2.0.0-beta3",
     "pundle-preset-default": "^2.0.0-beta3",
     "pundle-preset-typescript": "^2.0.0-beta3",
+    "tslint": "^4.2.0",
     "typescript": "^2.1.4"
   }
 }

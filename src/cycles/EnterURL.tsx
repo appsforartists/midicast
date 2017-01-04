@@ -30,9 +30,9 @@ import {
 
 import {
   MessageType,
+  Sinks,
   Song,
   Sources,
-  Sinks,
 } from '../types';
 
 export default function EnterURL({ DOM, messages: message$, ...sources }: Sources<any>): Sinks {
@@ -108,5 +108,5 @@ export default function EnterURL({ DOM, messages: message$, ...sources }: Source
     messages: Observable.merge(
       requestSong$,
     )
-  }
+  };
 }

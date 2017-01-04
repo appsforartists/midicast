@@ -40,9 +40,9 @@ import {
 import {
   Dict,
   MessageType,
+  Sinks,
   Song,
   Sources,
-  Sinks,
 } from '../types';
 
 import {
@@ -75,7 +75,7 @@ export default function TrackSelector({ DOM, messages: message$, ...sources }: S
       if (dataset.query) {
         payload['query'] = dataset.query;
       } else {
-        payload['id'] = parseInt(dataset.index)
+        payload['id'] = parseInt(dataset.index, 10);
       }
 
       return {
@@ -83,7 +83,7 @@ export default function TrackSelector({ DOM, messages: message$, ...sources }: S
           ? MessageType.CHANGE_ACTIVE_TRACKS
           : MessageType.CHANGE_TRACK_ACTIVE_STATUS,
         payload
-      }
+      };
     }
   );
 
@@ -152,7 +152,7 @@ export default function TrackSelector({ DOM, messages: message$, ...sources }: S
       ),
       changeActiveTracksMessage$,
     )
-  }
+  };
 }
 
 function TrackRow({ index, query, label, checked, ...props }) {

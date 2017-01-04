@@ -31,12 +31,13 @@ import {
 export type PianoAndConnectionDriver = {
   pianoConnectionDriver(request$: Observable<any>): Observable<boolean>,
   pianoDriver(note$: Observable<Note>): void,
-}
+};
 
+// tslint:disable-next-line:variable-name
 export const MIDICode = {
   UP: 0b10000000,
   DOWN: 0b10010000,
-}
+};
 
 export default function makePianoAndConnectionDriver(): PianoAndConnectionDriver {
   let piano$: Subject<WebMidi.MIDIOutput> = new Subject();
@@ -110,5 +111,5 @@ export default function makePianoAndConnectionDriver(): PianoAndConnectionDriver
         }
       );
     }
-  }
+  };
 };

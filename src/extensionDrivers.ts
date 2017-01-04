@@ -81,7 +81,7 @@ export function makeMessagesDriver({ shouldInitiate }: { shouldInitiate: boolean
           observer.next(incomingMessage);
         }
 
-        function connectToChannel (newChannel: chrome.runtime.Port) {
+        function connectToChannel(newChannel: chrome.runtime.Port) {
           if (connected) {
             return;
           }
@@ -116,10 +116,10 @@ export function makeMessagesDriver({ shouldInitiate }: { shouldInitiate: boolean
           if (channel) {
             channel.disconnect();
           }
-        }
+        };
       }
     ).publish().refCount();
-  }
+  };
 }
 
 export type MessagesDriver = (message$: Observable<any>) => Observable<any>;

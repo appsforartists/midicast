@@ -22,14 +22,14 @@ import { html } from 'snabbdom-jsx';
 
 import {
   Column,
-  InflexibleRow,
   FlexibleRow,
+  InflexibleRow,
   Row,
 } from '../snabstyle';
 
 import {
-  Sources,
   Sinks,
+  Sources,
   Tabs,
 } from '../types';
 
@@ -37,7 +37,7 @@ import {
 // them with thinks like tabs: Observable<Tab>
 export default function TabbedPane({ DOM, tabs: tabs$, ...sources }: Sources<any>): Sinks {
   const activeTabID$ = DOM.select('.tab').events('click').map(
-    event => parseInt(event.target.dataset.id)
+    event => parseInt(event.target.dataset.id, 10)
   ).startWith(0);
 
   const activeTab$ = activeTabID$.withLatestFrom(tabs$).map(
@@ -130,5 +130,5 @@ export default function TabbedPane({ DOM, tabs: tabs$, ...sources }: Sources<any
       )
     ),
     ...sinks,
-  }
+  };
 }

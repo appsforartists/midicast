@@ -34,9 +34,9 @@ import {
 import {
   MessageType,
   PlaybackStatus,
+  Sinks,
   Song,
   Sources,
-  Sinks,
 } from '../types';
 
 import EnterURL from './EnterURL';
@@ -185,5 +185,5 @@ export default function Popup({ DOM, messages: message$, ...sources }: Sources<a
         }
       )
     )
-  }
+  };
 }
