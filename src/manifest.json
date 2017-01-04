@@ -10,6 +10,9 @@
     "default_icon": "noto-piano.png",
     "default_popup": "popup.html"
   },
+  "icons": {
+    "128": "noto-piano.png"
+  },
   "permissions": [
     "activeTab",
     "declarativeContent",
