@@ -2,7 +2,11 @@
 
 a web extension that streams songs from a web page to a MIDI instrument
 
-![Screenshot](./screenshots/song-scanner.png?raw=true)
+<img
+  src = './screenshots/song-scanner.png?raw=true'
+  width = '540'
+  height = '612'
+/>
 
 ## How does it work? ##
 
@@ -20,11 +24,19 @@ Midicast is available on the Chrome Web Store.
 
 Your MIDI instrument must be connected to your computer.  If you are using a Mac and your instrument supports Bluetooth®, open the Audio MIDI Setup app and click Bluetooth:
 
-![Screenshot](./screenshots/audio-midi-home.png?raw=true)
+<img
+  src = './screenshots/audio-midi-home.png?raw=true'
+  width = '805'
+  height = '565'
+/>
 
 In the dialog that opens, click Connect next to your instrument:
 
-![Screenshot](./screenshots/audio-midi-bt-config.png?raw=true)
+<img
+  src = './screenshots/audio-midi-bt-config.png?raw=true'
+  width = '503'
+  height = '402'
+/>
 
 ## Architecture ##
 
