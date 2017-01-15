@@ -53,7 +53,7 @@ export default function Popup({ DOM, messages: message$, ...sources }: Sources<a
 
   const currentSongName$: Observable<Song> = message$.filter(
     message => message.type === MessageType.SONG_CHANGED
-  ).pluck('payload').pluck('name');
+  ).pluck('payload').pluck('header').pluck('name');
 
   const buttonAction$ = currentPlaybackStatus$.map(
     currentPlaybackStatus => {

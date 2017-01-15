@@ -26,7 +26,6 @@ import {
   Dict,
   Message,
   MessageType,
-  NamedMIDI,
   PlaybackStatus,
   Sinks,
   Song,
@@ -66,25 +65,23 @@ export default function Background({ messages: message$, pianoConnection: pianoA
     isAvailable => isAvailable === false
   );
 
-  const midiSong$: ConnectableObservable<NamedMIDI> = songRequest$.flatMap(
+  const midiSong$: ConnectableObservable<MIDIConvert.MIDI> = songRequest$.flatMap(
     ({ url, label }) => Observable.fromPromise(
       fetch(url).then(
         (response: Response) => response.arrayBuffer()
       ).then(
         MIDIConvert.parse
       ).then(
-        (midi: NamedMIDI) => {
-          if (midi.tracks[0].name && !midi.tracks[0].notes.length) {
-            midi.name = midi.tracks[0].name;
-          } else {
-            midi.name = label;
-          }
+        (midi: MIDIConvert.MIDI): MIDIConvert.MIDI => {
+          // This is going to be JSON-serialized when it gets sent to the UI, so
+          // use the same version here for consistency.
+          midi = midi.toJSON();
 
-          midi.tracks.forEach(
-            (track, i) => {
-              track.id = i;
-            }
-          );
+          // `label` is introspected from the link name; if the file doesn't
+          // give us a good name to show, hopefully the link will.
+          if (!midi.header.name) {
+            midi.header.name = label;
+          }
 
           return midi;
         }
@@ -118,7 +115,7 @@ export default function Background({ messages: message$, pianoConnection: pianoA
   // included as the song is playing.
 
   const notesByTrackIDByTime$ = midiSong$.map(
-    (namedMIDI: NamedMIDI) => {
+    (namedMIDI: MIDIConvert.MIDI) => {
       const notesByTrackIDByTime:Dict<Dict<any>> = {};
       let duration = 0;
 
@@ -176,7 +173,7 @@ export default function Background({ messages: message$, pianoConnection: pianoA
   const activeTrackIDProxy: Subject<Array<number>> = new Subject();
 
   const allTrackIDs$: Observable<Array<number>> = midiSong$.map(
-    (song: NamedMIDI) => song.tracks.map(track => track.id)
+    (song: MIDIConvert.MIDI) => song.tracks.map(track => track.id)
   );
 
   const activeTrackIDs$ = Observable.merge(

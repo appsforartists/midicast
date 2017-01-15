@@ -55,11 +55,6 @@ export type Note = {
   time: number,
 };
 
-export type NamedMIDI = MIDIConvert.MIDI & {
-  name: string,
-  tracks: Array<{ id: number }>,
-};
-
 export type Song = {
   label: string,
   url: string,
