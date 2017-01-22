@@ -18,6 +18,7 @@ import {
   Observable,
 } from 'rxjs';
 
+import * as _ from 'lodash';
 import * as MIDIConvert from 'midiconvert';
 
 import {
@@ -33,6 +34,8 @@ import {
   Block,
   CenteredColumn,
   FlexibleColumn,
+  FlexibleRow,
+  InflexibleColumn,
   InflexibleRow,
   Row,
 } from '../snabstyle';
@@ -49,7 +52,6 @@ import {
   wrapWithMessage,
 } from '../utils';
 
-// TODO: Make this based on NamedMIDI to ensure `id` is included too.
 type Tracks = Array<MIDIConvert.Track>;
 
 export default function TrackSelector({ DOM, messages: message$, ...sources }: Sources<any>): Sinks {
@@ -102,7 +104,7 @@ export default function TrackSelector({ DOM, messages: message$, ...sources }: S
         >
           <TrackRow
             query = 'all'
-            label = 'All instruments'
+            title = 'All instruments'
             checked = {
               currentTracks.map(track => track.id).every(
                 id => activeTrackIDs.includes(id)
@@ -110,35 +112,50 @@ export default function TrackSelector({ DOM, messages: message$, ...sources }: S
             }
           />
 
-          <TrackRow
-            query = 'piano'
-            label = 'Piano'
-            checked = {
-              currentTracks.filter(
-                track => track.name.toLowerCase().includes('piano')
-              ).map(track => track.id).every(
-                id => activeTrackIDs.includes(id)
-              )
-            }
-          />
-
           <li
             role = 'separator'
-            class='mdc-list-divider'
+            class ='mdc-list-divider'
           />
 
           {
-            currentTracks.filter(
-              track => track.notes.length
-            ).map(
-              track => (
-                <TrackRow
-                  index = { track.id }
-                  label = { track.instrument || track.name || 'unknown' }
-                  checked = { activeTrackIDs.includes(track.id) }
-                />
+            _.chain(currentTracks).groupBy(
+              track => track.instrumentFamily || 'other'
+            ).toPairs().map(
+              ([ family, currentTracksInFamily ]) => (
+                <Block
+                  component = 'li'
+                  listStyle = 'none'
+                >
+                  <TrackRow
+                    query = 'family'
+                    id = { family }
+                    title = { family }
+                    checked = {
+                      currentTracksInFamily.map(track => track.id).every(
+                        id => activeTrackIDs.includes(id)
+                      )
+                    }
+                  />
+                  <Block
+                    component = 'ul'
+                    listStyle = 'none'
+                  >
+                    {
+                      currentTracksInFamily.map(
+                        track => (
+                          <TrackRow
+                            index = { track.id }
+                            title = { track.name }
+                            subtitle = { track.instrument }
+                            checked = { activeTrackIDs.includes(track.id) }
+                          />
+                        )
+                      )
+                    }
+                  </Block>
+                </Block>
               )
-            )
+            ).value()
           }
         </FlexibleColumn>
       )
@@ -155,12 +172,15 @@ export default function TrackSelector({ DOM, messages: message$, ...sources }: S
   };
 }
 
-function TrackRow({ index, query, label, checked, ...props }) {
+function TrackRow({ index, query, title = '', subtitle = '', checked, ...props }) {
   let component = 'label';
 
   if (typeof index !== 'number') {
     component = 'li';
   }
+
+  const indexWidth = 16;
+  const indexMargin = 8;
 
   let vtree = (
     <InflexibleRow
@@ -179,25 +199,37 @@ function TrackRow({ index, query, label, checked, ...props }) {
         />
       </CenteredColumn>
 
-      <Block
-        width = { 16 }
-        marginRight = { 8 }
-        textAlign = 'right'
-        fontSize = '.8em'
-        opacity = { .8 }
+      <FlexibleColumn
+        alignItems = 'stretch'
       >
+        <Block
+          cursor = 'pointer'
+          marginLeft = { indexWidth + indexMargin }
+        >
+          { initialCase(title) }
+        </Block>
+
         {
-          index !== undefined
-            ? index
+          index && subtitle
+            ? <FlexibleRow
+                fontSize = '.8em'
+                opacity = { .8 }
+              >
+                <Block
+                  width = { indexWidth }
+                  marginRight = { indexMargin }
+                  textAlign = 'right'
+                >
+                  { index }
+                </Block>
+
+                <Block>
+                  { subtitle }
+                </Block>
+              </FlexibleRow>
             : ''
         }
-      </Block>
-
-      <Block
-        cursor = 'pointer'
-      >
-        { label }
-      </Block>
+      </FlexibleColumn>
     </InflexibleRow>
   );
 
@@ -258,4 +290,8 @@ function MDCCheckbox({ checked, ...props }) {
       </div>
     </div>
   );
+}
+
+function initialCase(label: string = '') {
+  return label.substr(0, 1).toUpperCase() + label.substr(1).toLowerCase();
 }
