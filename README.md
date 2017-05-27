@@ -10,11 +10,7 @@ a web extension that streams songs from a web page to a MIDI instrument
 
 ## How does it work? ##
 
-Midicast scans the page you're on for MIDI links, like these:
-
-- [Hungarian Rhapsody II on Midiworld](http://www.midiworld.com/midis/other/liszt/lszt_hr2.mid)
-
-Whatever it finds will show up in a list in the extension.  Click one of the songs in the extension to start playing it.  Midicast should work with any instrument that accepts MIDI input, such as a Yamaha Disklavier® player piano.
+Midicast scans the page you're on for MIDI links.  Whatever it finds will show up in a list in the extension.  Click one of the songs in the extension to start playing it.  Midicast should work with any instrument that accepts MIDI input, such as a Yamaha Disklavier® player piano.
 
 ## Installation ##
 
