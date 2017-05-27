@@ -139,12 +139,15 @@ export default function TrackSelector({ DOM, messages: message$, ...sources }: S
                   <Block
                     component = 'ul'
                     listStyle = 'none'
+                    margin = { 0 }
+                    padding = { 0 }
                   >
                     {
                       currentTracksInFamily.map(
                         track => (
                           <TrackRow
                             index = { track.id }
+                            indent = { true }
                             title = { track.name }
                             subtitle = { track.instrument }
                             checked = { activeTrackIDs.includes(track.id) }
@@ -172,22 +175,33 @@ export default function TrackSelector({ DOM, messages: message$, ...sources }: S
   };
 }
 
-function TrackRow({ index, query, title = '', subtitle = '', checked, ...props }) {
+function TrackRow({ index, query, title = '', subtitle = '', indent = false, checked, ...props }) {
   let component = 'label';
 
   if (typeof index !== 'number') {
     component = 'li';
   }
 
-  const indexWidth = 16;
-  const indexMargin = 8;
-
   let vtree = (
     <InflexibleRow
       component = { component }
       className = 'mdc-list-item'
+      marginTop = { 8 }
+      marginBottom = { 8 }
     >
-      <CenteredColumn className = 'mdc-list-item__start-detail'>
+      <CenteredColumn
+        className = 'mdc-list-item__start-detail'
+        alignItems = {
+          // Eventually, the checkboxes should be in one line, and a disclosure
+          // triangle should serve as the visual indicator for grouping, but for
+          // now, this does the job.
+          indent
+            ? 'center'
+            : 'flex-start'
+        }
+        marginRight = { 0 }
+        width = { 56 }
+      >
         <MDCCheckbox
           checked = { checked }
           attrs = {
@@ -204,31 +218,16 @@ function TrackRow({ index, query, title = '', subtitle = '', checked, ...props }
       >
         <Block
           cursor = 'pointer'
-          marginLeft = { indexWidth + indexMargin }
         >
           { initialCase(title) }
         </Block>
 
-        {
-          index && subtitle
-            ? <FlexibleRow
-                fontSize = '.8em'
-                opacity = { .8 }
-              >
-                <Block
-                  width = { indexWidth }
-                  marginRight = { indexMargin }
-                  textAlign = 'right'
-                >
-                  { index }
-                </Block>
-
-                <Block>
-                  { subtitle }
-                </Block>
-              </FlexibleRow>
-            : ''
-        }
+        <Block
+          fontSize = '.8em'
+          opacity = { .8 }
+        >
+          { initialCase(subtitle) }
+        </Block>
       </FlexibleColumn>
     </InflexibleRow>
   );
