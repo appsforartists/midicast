@@ -35,7 +35,11 @@ const {
   pianoConnectionDriver,
 } = makePianoAndConnectionDriver();
 
-if (location.href.includes('popup')) {
+const isBackgroundPage = window.innerWidth === 0 && window.innerHeight === 0;
+
+if (!isBackgroundPage) {
+  history.replaceState(null, null, 'index.html?cycle=popup');
+
   run(
     Popup,
     {
@@ -45,7 +49,9 @@ if (location.href.includes('popup')) {
     }
   );
 
-} else if (location.href.includes('background')) {
+} else {
+  history.replaceState(null, null, 'index.html?cycle=background');
+
   run(
     Background,
     {

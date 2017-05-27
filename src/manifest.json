@@ -4,11 +4,11 @@
   "version": "0.1",
   "content_security_policy": "script-src 'self' 'unsafe-eval' http://localhost:8080/dist/bundle.js; object-src 'self'",
   "background": {
-    "page": "background.html"
+    "page": "index.html"
   },
   "page_action": {
     "default_icon": "noto-piano.png",
-    "default_popup": "popup.html"
+    "default_popup": "index.html"
   },
   "icons": {
     "128": "noto-piano.png"
