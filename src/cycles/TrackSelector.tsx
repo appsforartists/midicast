@@ -121,43 +121,54 @@ export default function TrackSelector({ DOM, messages: message$, ...sources }: S
             _.chain(currentTracks).groupBy(
               track => track.instrumentFamily || 'other'
             ).toPairs().map(
-              ([ family, currentTracksInFamily ]) => (
-                <Block
-                  component = 'li'
-                  listStyle = 'none'
-                >
-                  <TrackRow
-                    query = 'family'
-                    id = { family }
-                    title = { family }
-                    checked = {
-                      currentTracksInFamily.map(track => track.id).every(
-                        id => activeTrackIDs.includes(id)
-                      )
-                    }
-                  />
+              ([ family, currentTracksInFamily ]) => {
+                const currentTrackIDsInFamily = currentTracksInFamily.map(
+                  track => track.id
+                );
+
+                const checked = currentTrackIDsInFamily.every(
+                  id => activeTrackIDs.includes(id)
+                );
+
+                const indeterminate = !checked && currentTrackIDsInFamily.some(
+                  id => activeTrackIDs.includes(id)
+                );
+
+                return (
                   <Block
-                    component = 'ul'
+                    component = 'li'
                     listStyle = 'none'
-                    margin = { 0 }
-                    padding = { 0 }
                   >
-                    {
-                      currentTracksInFamily.map(
-                        track => (
-                          <TrackRow
-                            index = { track.id }
-                            indent = { true }
-                            title = { track.name }
-                            subtitle = { track.instrument }
-                            checked = { activeTrackIDs.includes(track.id) }
-                          />
+                    <TrackRow
+                      query = 'family'
+                      id = { family }
+                      title = { family }
+                      checked = { checked }
+                      indeterminate = { indeterminate }
+                    />
+                    <Block
+                      component = 'ul'
+                      listStyle = 'none'
+                      margin = { 0 }
+                      padding = { 0 }
+                    >
+                      {
+                        currentTracksInFamily.map(
+                          track => (
+                            <TrackRow
+                              index = { track.id }
+                              indent = { true }
+                              title = { track.name }
+                              subtitle = { track.instrument }
+                              checked = { activeTrackIDs.includes(track.id) }
+                            />
+                          )
                         )
-                      )
-                    }
+                      }
+                    </Block>
                   </Block>
-                </Block>
-              )
+                );
+              }
             ).value()
           }
         </FlexibleColumn>
@@ -175,7 +186,7 @@ export default function TrackSelector({ DOM, messages: message$, ...sources }: S
   };
 }
 
-function TrackRow({ index, query, title = '', subtitle = '', indent = false, checked, ...props }) {
+function TrackRow({ index, query, title = '', subtitle = '', indent = false, checked, indeterminate, ...props }) {
   let component = 'label';
 
   if (typeof index !== 'number') {
@@ -204,6 +215,7 @@ function TrackRow({ index, query, title = '', subtitle = '', indent = false, che
       >
         <MDCCheckbox
           checked = { checked }
+          indeterminate = { indeterminate }
           attrs = {
             {
               'data-index': index,
@@ -243,7 +255,7 @@ function TrackRow({ index, query, title = '', subtitle = '', indent = false, che
   return vtree;
 }
 
-function MDCCheckbox({ checked, ...props }) {
+function MDCCheckbox({ checked, indeterminate, ...props }) {
   return (
     <div
       { ...props }
@@ -253,6 +265,13 @@ function MDCCheckbox({ checked, ...props }) {
         type = 'checkbox'
         className = 'mdc-checkbox__native-control'
         checked = { checked }
+        indeterminate = { indeterminate }
+        hook = {
+          {
+            insert: indeterminateCheckboxHook,
+            update: indeterminateCheckboxHook,
+          }
+        }
       />
 
       <div className = 'mdc-checkbox__background'>
@@ -289,6 +308,17 @@ function MDCCheckbox({ checked, ...props }) {
       </div>
     </div>
   );
+}
+
+function indeterminateCheckboxHook() {
+  // The current VNode is the last argument to the hook, so manually destructure
+  // it
+  const {
+    elm,
+    data,
+  } = arguments[arguments.length - 1];
+
+  elm.indeterminate = data.props.indeterminate;
 }
 
 function initialCase(label: string = '') {
