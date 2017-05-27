@@ -57,7 +57,7 @@ export function Block(props: Props, children:Array<VNode>) {
 
   sizeStyleKeys.forEach(
     key => {
-      if (style[key] && typeof style[key] === 'number') {
+      if (style.hasOwnProperty(key) && typeof style[key] === 'number') {
         style[key] += 'px';
       }
     }
