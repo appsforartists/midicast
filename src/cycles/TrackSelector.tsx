@@ -74,14 +74,15 @@ export default function TrackSelector({ DOM, messages: message$, ...sources }: S
         active: (event.target as HTMLInputElement).checked,
       };
 
-      if (dataset.query) {
-        payload['query'] = dataset.query;
-      } else {
-        payload['id'] = parseInt(dataset.index, 10);
+      payload.query = dataset.query;
+      payload.id = parseInt(dataset.id, 10);
+
+      if (isNaN(payload.id)) {
+        payload.id = dataset.id;
       }
 
       return {
-        type: payload['query']
+        type: payload.query
           ? MessageType.CHANGE_ACTIVE_TRACKS
           : MessageType.CHANGE_TRACK_ACTIVE_STATUS,
         payload
@@ -156,7 +157,7 @@ export default function TrackSelector({ DOM, messages: message$, ...sources }: S
                         currentTracksInFamily.map(
                           track => (
                             <TrackRow
-                              index = { track.id }
+                              id = { track.id }
                               indent = { true }
                               title = { track.name }
                               subtitle = { track.instrument }
@@ -186,10 +187,10 @@ export default function TrackSelector({ DOM, messages: message$, ...sources }: S
   };
 }
 
-function TrackRow({ index, query, title = '', subtitle = '', indent = false, checked, indeterminate, ...props }) {
+function TrackRow({ id, query, title = '', subtitle = '', indent = false, checked, indeterminate, ...props }) {
   let component = 'label';
 
-  if (typeof index !== 'number') {
+  if (typeof id !== 'number') {
     component = 'li';
   }
 
@@ -218,7 +219,7 @@ function TrackRow({ index, query, title = '', subtitle = '', indent = false, che
           indeterminate = { indeterminate }
           attrs = {
             {
-              'data-index': index,
+              'data-id': id,
               'data-query': query,
             }
           }

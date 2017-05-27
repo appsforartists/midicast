@@ -189,16 +189,34 @@ export default function Background({ messages: message$, pianoConnection: pianoA
       }
     ),
     changeActiveTracksRequest$.withLatestFrom(activeTrackIDProxy, midiSong$).map(
-      ([ { query, active }, oldActiveTrackIDs, song ]) => {
+      ([ { query, active, id }, oldActiveTrackIDs, song ]) => {
         let activeTrackIDs: Array<number>;
 
         if (query === 'all') {
           if (active) {
             activeTrackIDs = song.tracks.map(
-              track => track.id
+              track => track.id!
             );
           } else {
             activeTrackIDs = [];
+          }
+        } else if (query === 'family') {
+          if (id === 'other') {
+            id = undefined;
+          }
+
+          if (active) {
+            activeTrackIDs = oldActiveTrackIDs.concat(
+              song.tracks.filter(
+                track => track.instrumentFamily === id
+              ).map(
+                track => track.id!
+              )
+            );
+          } else {
+            activeTrackIDs = oldActiveTrackIDs.filter(
+              trackID => song.tracks[trackID].instrumentFamily !== id
+            );
           }
         } else {
           const queryPieces:Array<string> = query.toLowerCase().split(',');
@@ -209,7 +227,7 @@ export default function Background({ messages: message$, pianoConnection: pianoA
                 (queryPiece: string) => track.name.toLowerCase().includes(queryPiece)
               )
             ).map(
-              track => track.id
+              track => track.id!
             );
 
             oldActiveTrackIDs.forEach(
