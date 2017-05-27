@@ -23,28 +23,28 @@ import {
   Observable,
 } from 'rxjs';
 
-// TS doesn't like trailing commas in enums
-export enum PlaybackStatus {
-  STOPPED,
-  PAUSED,
-  PLAYING
+// When the next version of TS comes out, we can change these back to enums
+export const PlaybackStatus = {
+  STOPPED: 'stopped',
+  PAUSED: 'paused',
+  PLAYING: 'playing',
 };
 
-export enum MessageType {
-  ERROR,
-  PLAY_SONG,
-  CHANGE_PLAYBACK_STATUS,
-  CHANGE_TRACK_ACTIVE_STATUS,
-  CHANGE_ACTIVE_TRACKS,
-  SONG_CHANGED,
-  PLAYBACK_STATUS_CHANGED,
-  ACTIVE_TRACKS_CHANGED,
-  PIANO_AVAILABILITY_CHANGED,
-  UPDATE_STATUSES
+export const MessageType = {
+  ERROR: 'error',
+  PLAY_SONG: 'play_song',
+  CHANGE_PLAYBACK_STATUS: 'change_playback_status',
+  CHANGE_TRACK_ACTIVE_STATUS: 'change_track_active_status',
+  CHANGE_ACTIVE_TRACKS: 'change_active_tracks',
+  SONG_CHANGED: 'song_changed',
+  PLAYBACK_STATUS_CHANGED: 'playback_status_changed',
+  ACTIVE_TRACKS_CHANGED: 'active_tracks_changed',
+  PIANO_AVAILABILITY_CHANGED: 'piano_availability_changed',
+  UPDATE_STATUSES: 'update_statuses',
 };
 
 export type Message<T> = {
-  type: MessageType,
+  type: string, // this becomes MessageType again when string enums come out
   payload: T
 };
 
