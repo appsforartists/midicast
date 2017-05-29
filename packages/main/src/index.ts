@@ -38,7 +38,7 @@ const {
 const isBackgroundPage = window.innerWidth === 0 && window.innerHeight === 0;
 
 if (!isBackgroundPage) {
-  history.replaceState(null, null, 'index.html?cycle=popup');
+  history.replaceState(null, 'Popup', 'index.html?cycle=popup');
 
   run(
     Popup,
@@ -50,7 +50,7 @@ if (!isBackgroundPage) {
   );
 
 } else {
-  history.replaceState(null, null, 'index.html?cycle=background');
+  history.replaceState(null, 'Background', 'index.html?cycle=background');
 
   run(
     Background,

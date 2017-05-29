@@ -1,6 +1,8 @@
-const {
-  compilerOptions,
-} = require('./tsconfig');
+const path = require('path');
+const tsConfig = require('./tsconfig');
+const mainTSConfig = require('../../tsconfig');
+
+const extensions = ['js', 'jsx', 'ts', 'tsx'];
 
 module.exports = {
   debug: true,
@@ -28,11 +30,17 @@ module.exports = {
       require.resolve('pundle-preset-typescript'),
       {
         loader: {
-          extensions: ['js', 'jsx', 'ts', 'tsx'],
+          extensions,
         },
         transformer: {
-          extensions: ['js', 'jsx', 'ts', 'tsx'],
-          config: { compilerOptions },
+          extensions,
+          config: {
+            compilerOptions: Object.assign(
+              {},
+              mainTSConfig.compilerOptions,
+              tsConfig.compilerOptions
+            )
+          },
         },
       },
     ],
