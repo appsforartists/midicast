@@ -1,6 +1,5 @@
 {
   "devDependencies": {
-    "@types/whatwg-fetch": "^0.0.33",
     "lerna": "^2.0.0-rc.5",
     "pundle": "^2.0.0-beta12",
     "pundle-cli": "^2.0.0-beta12",

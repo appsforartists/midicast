@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "declaration": true,
     "importHelpers": true,
     "jsx": "react",
     "jsxFactory": "html",
@@ -18,8 +19,7 @@
     "target": "es6",
     "types": [
       "chrome",
-      "webmidi",
-      "whatwg-fetch"
+      "webmidi"
     ]
   }
 }
