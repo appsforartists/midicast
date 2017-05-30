@@ -32,6 +32,18 @@ export type InstrumentAndConnectionDriver = {
   instrumentDriver(note$: Observable<Note>): void,
 };
 
+export type InstrumentConnectionSource = {
+  instrumentConnection: Observable<boolean>,
+};
+
+export type InstrumentConnectionSink = {
+  instrumentConnection: Observable<any>,
+};
+
+export type InstrumentSink = {
+  instrument: Observable<Note>,
+};
+
 // tslint:disable-next-line:variable-name
 export const MIDICode = {
   UP: 0b10000000,

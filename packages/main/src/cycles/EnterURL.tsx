@@ -29,18 +29,24 @@ import {
 } from 'snab-style';
 
 import {
+  DOMSink,
+  DOMSource,
+  Message,
   MessageType,
-  Sinks,
+  MessagesSink,
+  MessagesSource,
   Song,
-  Sources,
 } from '../types';
 
-export default function EnterURL({ DOM, messages: message$, ...sources }: Sources<any>): Sinks {
+export type Sources = DOMSource & MessagesSource;
+export type Sinks = DOMSink & MessagesSink;
+
+export default function EnterURL({ DOM, messages: message$, ...sources }: Sources): Sinks {
   const input$: Observable<string> = DOM.select('#url').events('keyup').map(
     (event) => (event.target as HTMLInputElement).value
   );
 
-  const requestSong$: Observable<Song> = Observable.combineLatest(
+  const requestSong$: Observable<Message<Song>> = Observable.combineLatest(
     Observable.merge(
       DOM.select('#play-url').events('click'),
       DOM.select('#url').events('keyup').filter(
@@ -49,9 +55,9 @@ export default function EnterURL({ DOM, messages: message$, ...sources }: Source
     ),
     input$
   ).pluck(1).filter(
-    url => url.length
+    (url: string) => url.length
   ).map(
-    url => (
+    (url: string) => (
       {
         type: MessageType.PLAY_SONG,
         payload: {

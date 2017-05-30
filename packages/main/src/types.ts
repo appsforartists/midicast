@@ -20,8 +20,18 @@ import {
   Observable,
 } from 'rxjs';
 
-import { DOMSource } from '@cycle/dom/rxjs-typings';
-import { VNode } from '@cycle/dom';
+import {
+  DOMSource as CycleDOMSource,
+} from '@cycle/dom/rxjs-typings';
+
+import {
+  VNode,
+} from '@cycle/dom';
+
+import {
+  MessagesSink as GenericMessagesSink,
+  MessagesSource as GenericMessagesSource,
+} from 'cycle-extensions';
 
 import {
   Note,
@@ -57,25 +67,69 @@ export type Song = {
   url: string,
 };
 
-export type Tabs = {
+export type Messages = {
+  type: 'error',
+  payload: string
+} | {
+  type: 'play_song',
+  payload: Song,
+} | {
+  type: 'change_playback_status',
+  payload: 'stopped' | 'paused' | 'playing',
+} | {
+  type: 'change_track_active_status',
+  payload: {
+    active: boolean,
+    id: number,
+  }
+} | {
+  type: 'song_changed',
+  payload: MIDIConvert.MIDI
+} | {
+  type: 'playback_status_changed',
+  payload: 'stopped' | 'paused' | 'playing',
+} | {
+  type: 'active_tracks_changed',
+  payload: Array<number>,
+} | {
+  type: 'instrument_availability_changed',
+  payload: boolean,
+} | {
+  type: 'update_statuses',
+  payload: undefined,
+};
+
+export type Tab = {
   label: string,
-  component(sources: Sources<any>): Sinks,
+  component(sources: DOMSource): DOMSink,
 };
 
-export type Sources<T> = {
-  DOM: DOMSource,
-  hostPage: Observable<T>,
-  messages: Observable<Message<any>>,
-  instrumentConnection: Observable<boolean>,
+export type DOMSource = {
+  DOM: CycleDOMSource,
 };
 
-export type Sinks = {
+export type DOMSink = {
   DOM: Observable<VNode>,
-  hostPage: Observable<string>,
-  messages: Observable<Message<any>>,
-  instrument: Observable<Note>,
-  instrumentConnection: Observable<any>,
 };
+
+export type MessagesSource = {
+  messages: Observable<Messages>,
+};
+
+export type MessagesSink = {
+  messages: Observable<Messages>,
+};
+
+export {
+  HostPageSink,
+  HostPageSource,
+} from 'cycle-extensions';
+
+export {
+  InstrumentConnectionSink,
+  InstrumentConnectionSource,
+  InstrumentSink,
+} from 'cycle-midi';
 
 export type Dict<T> = {
   [key: string]: T,

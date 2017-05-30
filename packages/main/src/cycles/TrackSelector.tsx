@@ -41,20 +41,21 @@ import {
 } from 'snab-style';
 
 import {
+  DOMSink,
+  DOMSource,
   Dict,
   MessageType,
-  Sinks,
+  MessagesSink,
+  MessagesSource,
   Song,
-  Sources,
 } from '../types';
-
-import {
-  wrapWithMessage,
-} from '../utils';
 
 type Tracks = Array<MIDIConvert.Track>;
 
-export default function TrackSelector({ DOM, messages: message$, ...sources }: Sources<any>): Sinks {
+export type Sources = DOMSource & MessagesSource;
+export type Sinks = DOMSink & MessagesSink;
+
+export default function TrackSelector({ DOM, messages: message$, ...sources }: Sources): Sinks {
   const currentTracks$: Observable<Tracks> = message$.filter(
     message => message.type === MessageType.SONG_CHANGED
   ).pluck('payload').pluck('tracks').map(

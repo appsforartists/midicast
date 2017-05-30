@@ -24,15 +24,21 @@ import * as MIDIConvert from 'midiconvert';
 
 import {
   Dict,
+  InstrumentConnectionSink,
+  InstrumentConnectionSource,
+  InstrumentSink,
   Message,
   MessageType,
+  MessagesSink,
+  MessagesSource,
   PlaybackStatus,
-  Sinks,
   Song,
-  Sources,
 } from '../types';
 
-export default function Background({ messages: message$, instrumentConnection: instrumentAvailability$ }: Sources<any>): Sinks {
+export type Sources = MessagesSource & InstrumentConnectionSource;
+export type Sinks = MessagesSink & InstrumentConnectionSink & InstrumentSink;
+
+export default function Background({ messages: message$, instrumentConnection: instrumentAvailability$ }: Sources): Sinks {
   const songRequest$: Observable<Song> = message$.filter(
     (message: Message<any>) => message.type === MessageType.PLAY_SONG
   ).pluck('payload');
@@ -302,23 +308,17 @@ export default function Background({ messages: message$, instrumentConnection: i
       playbackStatusChangedMessage$,
       songChangedMessage$,
       activeTracksChangedMessage$,
-      updateStatusesRequest$.withLatestFrom(
-        instrumentAvailabilityChangedMessage$,
-        playbackStatusChangedMessage$,
-        songChangedMessage$,
-        activeTracksChangedMessage$,
-      ).flatMap(
-        ([,
-          instrumentAvailabilityMessage,
-          playbackStatusMessage,
-          songChangedMessage,
-          activeTracksChangedMessage,
-        ]) => Observable.of(
-          instrumentAvailabilityMessage,
-          playbackStatusMessage,
-          songChangedMessage,
-          activeTracksChangedMessage,
-        )
+      updateStatusesRequest$.withLatestFrom(instrumentAvailabilityChangedMessage$).flatMap(
+        ([, instrumentAvailabilityMessage]) => Observable.of(instrumentAvailabilityMessage)
+      ),
+      updateStatusesRequest$.withLatestFrom(playbackStatusChangedMessage$).flatMap(
+        ([, playbackStatusMessage]) => Observable.of(playbackStatusMessage)
+      ),
+      updateStatusesRequest$.withLatestFrom(songChangedMessage$).flatMap(
+        ([, songChangedMessage]) => Observable.of(songChangedMessage)
+      ),
+      updateStatusesRequest$.withLatestFrom(activeTracksChangedMessage$).flatMap(
+        ([, activeTracksChangedMessage]) => Observable.of(activeTracksChangedMessage)
       ),
     ),
     instrument: note$,

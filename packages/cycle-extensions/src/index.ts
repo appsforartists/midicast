@@ -20,6 +20,24 @@ import {
   Subscription,
 } from 'rxjs';
 
+export type HostPageSource<T = any> = {
+  hostPage: Observable<T>,
+};
+
+export type HostPageSink = {
+  hostPage: Observable<string>,
+};
+
+export type MessagesDriver<O, I> = (message$: Observable<O>) => Observable<I>;
+
+export type MessagesSource<T = any> = {
+  messages: Observable<T>,
+};
+
+export type MessagesSink<T = any> = {
+  messages: Observable<T>,
+};
+
 const browser: typeof chrome = (window as any).browser || chrome;
 
 /**
@@ -119,5 +137,3 @@ export function makeMessagesDriver<O, I>({ shouldInitiate }: { shouldInitiate: b
     ).publish().refCount();
   };
 }
-
-export type MessagesDriver<O, I> = (message$: Observable<O>) => Observable<I>;

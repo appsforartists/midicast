@@ -27,11 +27,15 @@ import {
 } from 'snab-style';
 
 import {
+  DOMSink,
+  DOMSource,
+  HostPageSink,
+  HostPageSource,
   Message,
   MessageType,
-  Sinks,
+  MessagesSink,
+  MessagesSource,
   Song,
-  Sources,
 } from '../types';
 
 export type MIDILink = {
@@ -39,7 +43,10 @@ export type MIDILink = {
   label: string,
 };
 
-export default function SongScanner({ DOM, hostPage: midiLinks$, messages: message$ }: Sources<Array<MIDILink>>): Sinks {
+export type Sources = DOMSource & HostPageSource<Array<MIDILink>> & MessagesSource;
+export type Sinks = DOMSink & HostPageSink & MessagesSink;
+
+export default function SongScanner({ DOM, hostPage: midiLinks$, messages: message$ }: Sources): Sinks {
   const selectedSong$: Observable<Song> = DOM.select('.song-link').events('click').map(
     event => (event.currentTarget as HTMLElement).dataset,
   );

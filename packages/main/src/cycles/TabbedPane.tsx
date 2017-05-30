@@ -28,16 +28,21 @@ import {
 } from 'snab-style';
 
 import {
-  Sinks,
-  Sources,
-  Tabs,
+  DOMSink,
+  DOMSource,
+  Dict,
+  Tab,
 } from '../types';
 
-// TODO: make Sources and Sinks interfaces rather than types so we can extend
-// them with thinks like tabs: Observable<Tab>
-export default function TabbedPane({ DOM, tabs: tabs$, ...sources }: Sources<any>): Sinks {
+export type Sources = DOMSource & {
+  tabs: Observable<Array<Tab>>
+};
+
+export type Sinks = DOMSink;
+
+export default function TabbedPane({ DOM, tabs: tabs$, ...sources }: Sources): Sinks {
   const activeTabID$ = DOM.select('.tab').events('click').map(
-    event => parseInt(event.target.dataset.id, 10)
+    event => parseInt((event.target as HTMLElement).dataset.id!, 10)
   ).startWith(0);
 
   const activeTab$ = activeTabID$.withLatestFrom(tabs$).map(
@@ -51,15 +56,15 @@ export default function TabbedPane({ DOM, tabs: tabs$, ...sources }: Sources<any
   );
 
   const appBarElevation$ = DOM.select('#scroll-pane').events('scroll').map(
-    event => Number(event.target.scrollTop !== 0)
+    event => Number((event.target as HTMLElement).scrollTop !== 0)
   ).startWith(0);
 
   // Introspect sources to infer sink names, and pass the sinks through
-  const sinks = {};
+  const sinks: Dict<Observable<any>> = {};
 
   Object.keys(sources).forEach(
     driverName => sinks[driverName] = activeTab$.flatMap(
-      tabSink => tabSink[driverName] || Observable.empty()
+      (tabSink: Dict<Observable<any>>) => tabSink[driverName] || Observable.empty()
     )
   );
 

@@ -32,11 +32,13 @@ import {
 } from 'snab-style';
 
 import {
+  DOMSink,
+  DOMSource,
   MessageType,
+  MessagesSink,
+  MessagesSource,
   PlaybackStatus,
-  Sinks,
   Song,
-  Sources,
 } from '../types';
 
 import EnterURL from './EnterURL';
@@ -44,10 +46,13 @@ import SongScanner from './SongScanner';
 import TabbedPane from './TabbedPane';
 import TrackSelector from './TrackSelector';
 
-export default function Popup({ DOM, messages: message$, ...sources }: Sources<any>): Sinks {
+export type Sources = DOMSource & MessagesSource;
+export type Sinks = DOMSink & MessagesSink;
+
+export default function Popup({ DOM, messages: message$, ...sources }: Sources): Sinks {
   // TODO: find a way to make this get the current status from the background
   // page when the popup reopens
-  const currentPlaybackStatus$: Observable<PlaybackStatus> = message$.filter(
+  const currentPlaybackStatus$: Observable<string> = message$.filter(
     message => message.type === MessageType.PLAYBACK_STATUS_CHANGED
   ).pluck('payload').startWith(PlaybackStatus.STOPPED);
 
