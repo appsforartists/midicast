@@ -28,7 +28,7 @@ import makePianoAndConnectionDriver from './pianoDriver';
 import {
   hostPageDriver,
   makeMessagesDriver,
-} from './extensionDrivers';
+} from 'cycle-extensions';
 
 const {
   pianoDriver,

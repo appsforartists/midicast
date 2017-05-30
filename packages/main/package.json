@@ -12,6 +12,7 @@
   "dependencies": {
     "@cycle/dom": "^14.3.0",
     "@cycle/rxjs-run": "^3.3.0",
+    "cycle-extensions": "^1.0.0",
     "lodash": "^4.17.4",
     "midiconvert": "^0.4.1",
     "rxjs": "^5.0.2",

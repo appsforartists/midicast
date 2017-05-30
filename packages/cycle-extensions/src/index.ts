@@ -20,17 +20,15 @@ import {
   Subscription,
 } from 'rxjs';
 
-if (typeof browser === 'undefined') {
-  window.browser = chrome;
-}
+const browser: typeof chrome = (window as any).browser || chrome;
 
 /**
  * Accepts a stream of code snippets to execute on the active tab and returns a
  * stream of responses.
  */
-export function hostPageDriver(snippet$: Observable<string>): Observable<any> {
+export function hostPageDriver<T>(snippet$: Observable<string>): Observable<T> {
   return Observable.create(
-    (observer: Observer<any>) => {
+    (observer: Observer<T>) => {
       const subscription = snippet$.subscribe(
         snippet => {
           browser.tabs.executeScript(
@@ -38,7 +36,7 @@ export function hostPageDriver(snippet$: Observable<string>): Observable<any> {
               code: snippet,
               allFrames: true,
             },
-            ([ response ]) => observer.next(response)
+            ([ response ]: Array<T>) => observer.next(response)
           );
         }
       );
@@ -56,14 +54,14 @@ export function hostPageDriver(snippet$: Observable<string>): Observable<any> {
  * them.  Thus, set `shouldInitiate` to `true` unless `messagesDriver` is for a
  * background page.
  */
-export function makeMessagesDriver({ shouldInitiate }: { shouldInitiate: boolean }): MessagesDriver {
+export function makeMessagesDriver<O, I>({ shouldInitiate }: { shouldInitiate: boolean }): MessagesDriver<O, I> {
   /**
    * Accepts a stream of messages to send on the channel and returns a stream of
    * responses received on the channel.
    */
-  return function messagesDriver(outgoingMessage$: Observable<any>): Observable<any> {
+  return function messagesDriver(outgoingMessage$: Observable<O>): Observable<I> {
     return Observable.create(
-      (observer: Observer<any>) => {
+      (observer: Observer<I>) => {
         let channel: chrome.runtime.Port;
         let outgoingSubscription: Subscription;
         let connected = false;
@@ -76,7 +74,7 @@ export function makeMessagesDriver({ shouldInitiate }: { shouldInitiate: boolean
           browser.runtime.onConnect.addListener(connectToChannel);
         }
 
-        function forwardMessage(incomingMessage: any) {
+        function forwardMessage(incomingMessage: I) {
           console.log('Received:', incomingMessage);
           observer.next(incomingMessage);
         }
@@ -97,7 +95,7 @@ export function makeMessagesDriver({ shouldInitiate }: { shouldInitiate: boolean
           );
 
           outgoingSubscription = outgoingMessage$.subscribe(
-            outgoingMessage => {
+            (outgoingMessage: O) => {
               try {
                 console.log('Sending:', outgoingMessage);
                 channel.postMessage(outgoingMessage);
@@ -122,12 +120,4 @@ export function makeMessagesDriver({ shouldInitiate }: { shouldInitiate: boolean
   };
 }
 
-export type MessagesDriver = (message$: Observable<any>) => Observable<any>;
-
-declare global {
-  let browser: typeof chrome;
-
-  interface Window {
-    browser: typeof chrome;
-  }
-}
+export type MessagesDriver<O, I> = (message$: Observable<O>) => Observable<I>;

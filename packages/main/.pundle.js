@@ -24,12 +24,19 @@ module.exports = {
   presets: [
     [
       require.resolve('pundle-preset-default'),
-      {},
+      {
+        resolver: false,
+        loader: false,
+      }
     ],
     [
       require.resolve('pundle-preset-typescript'),
       {
         loader: {
+          extensions,
+        },
+        resolver: {
+          packageMains: ['typescript:main', 'module', 'browser', 'main'],
           extensions,
         },
         transformer: {
@@ -40,9 +47,9 @@ module.exports = {
               mainTSConfig.compilerOptions,
               tsConfig.compilerOptions
             )
-          },
-        },
-      },
+          }
+        }
+      }
     ],
   ],
 };

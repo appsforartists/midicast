@@ -1,0 +1,34 @@
+{
+  "name": "cycle-extensions",
+  "version": "1.0.0",
+  "scripts": {
+    "clean": "rm -rf ./dist/*; mkdir -p ./dist/",
+    "lint": "../../node_modules/.bin/tslint -c ./tslint.json --project tsconfig.json",
+    "build": "yarn run clean; ../../node_modules/.bin/tsc"
+  },
+  "description": "Cycle drivers to build Chrome and WebExtensions",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "typescript:main": "src/index.ts",
+  "author": "Brenton Simpson <appsforartists@google.com>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "rxjs": "^5.0.2",
+    "tslib": "^1.4.0"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.36"
+  },
+  "keywords": [
+    "cycle",
+    "cyclejs",
+    "driver",
+    "chrome",
+    "extension",
+    "extensions",
+    "chrome extension",
+    "chrome extensions",
+    "web extension",
+    "web extensions"
+  ]
+}
