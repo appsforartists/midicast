@@ -53,12 +53,13 @@ export default function Background({ messages: message$, instrumentConnection: i
     (message: Message<any>) => message.type === MessageType.UPDATE_STATUSES
   ).pluck('payload');
 
+  // When TS2.4 lands, these can go back to status: PlaybackStatus
   const playRequest$ = changeStatusRequest$.filter(
-    (status: PlaybackStatus) => status === PlaybackStatus.PLAYING
+    (status: string) => status === PlaybackStatus.PLAYING
   );
 
   const stopRequest$ = changeStatusRequest$.filter(
-    (status: PlaybackStatus) => status === PlaybackStatus.STOPPED
+    (status: string) => status === PlaybackStatus.STOPPED
   );
 
   const instrumentIsOffline$ = instrumentAvailability$.filter(
@@ -328,7 +329,8 @@ export default function Background({ messages: message$, instrumentConnection: i
   };
 }
 
-export function wrapWithMessage<T>(type: MessageType): (type: T) => Message<T> {
+// When TS2.4 lands, this can go back to wrapWithMessage(`type: MessageType`)
+export function wrapWithMessage<T>(type: string): (type: T) => Message<T> {
   return function (payload) {
     return {
       type,
