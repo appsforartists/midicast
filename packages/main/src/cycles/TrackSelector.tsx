@@ -22,13 +22,13 @@ import * as _ from 'lodash';
 import * as MIDIConvert from 'midiconvert';
 
 import {
+  svg,
+} from '@cycle/dom';
+
+import {
   VNode,
   html,
 } from 'snabbdom-jsx';
-
-import {
-  svg,
-} from '@cycle/dom';
 
 import {
   Block,
@@ -38,7 +38,7 @@ import {
   InflexibleColumn,
   InflexibleRow,
   Row,
-} from '../snabstyle';
+} from 'snab-style';
 
 import {
   Dict,

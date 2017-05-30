@@ -1,0 +1,27 @@
+{
+  "name": "snab-style",
+  "version": "1.0.0",
+  "scripts": {
+    "clean": "rm -rf ./dist/*; mkdir -p ./dist/",
+    "lint": "../../node_modules/.bin/tslint -c ./tslint.json --project tsconfig.json",
+    "build": "yarn run clean; ../../node_modules/.bin/tsc"
+  },
+  "description": "Snabbdom-JSX components for the flexbox primitives.  Like jsxstyle, they accept styles directly as props.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "typescript:main": "src/index.ts",
+  "author": "Brenton Simpson <appsforartists@google.com>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "snabbdom-jsx": "^0.3.1"
+  },
+  "keywords": [
+    "cycle",
+    "cyclejs",
+    "snabdom",
+    "snabbdom",
+    "style",
+    "styles",
+    "inline styles"
+  ]
+}

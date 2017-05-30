@@ -26,7 +26,7 @@ import {
 import {
   CenteredColumn,
   CenteredRow,
-} from '../snabstyle';
+} from 'snab-style';
 
 import {
   MessageType,

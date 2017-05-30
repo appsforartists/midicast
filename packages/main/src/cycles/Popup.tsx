@@ -29,7 +29,7 @@ import {
   InflexibleRow,
   MaterialIcon,
   Row,
-} from '../snabstyle';
+} from 'snab-style';
 
 import {
   MessageType,

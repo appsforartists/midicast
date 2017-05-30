@@ -25,7 +25,7 @@ import {
   FlexibleRow,
   InflexibleRow,
   Row,
-} from '../snabstyle';
+} from 'snab-style';
 
 import {
   Sinks,

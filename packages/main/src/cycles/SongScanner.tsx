@@ -21,18 +21,18 @@ import {
 import { html } from 'snabbdom-jsx';
 
 import {
+  Column,
+  InflexibleColumn,
+  InflexibleRow,
+} from 'snab-style';
+
+import {
   Message,
   MessageType,
   Sinks,
   Song,
   Sources,
 } from '../types';
-
-import {
-  Column,
-  InflexibleColumn,
-  InflexibleRow,
-} from '../snabstyle';
 
 export type MIDILink = {
   url: string,
