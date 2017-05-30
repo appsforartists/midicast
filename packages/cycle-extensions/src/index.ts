@@ -26,9 +26,9 @@ const browser: typeof chrome = (window as any).browser || chrome;
  * Accepts a stream of code snippets to execute on the active tab and returns a
  * stream of responses.
  */
-export function hostPageDriver<T>(snippet$: Observable<string>): Observable<T> {
+export function hostPageDriver<I>(snippet$: Observable<string>): Observable<I> {
   return Observable.create(
-    (observer: Observer<T>) => {
+    (observer: Observer<I>) => {
       const subscription = snippet$.subscribe(
         snippet => {
           browser.tabs.executeScript(
@@ -36,7 +36,7 @@ export function hostPageDriver<T>(snippet$: Observable<string>): Observable<T> {
               code: snippet,
               allFrames: true,
             },
-            ([ response ]: Array<T>) => observer.next(response)
+            ([ response ]: Array<I>) => observer.next(response)
           );
         }
       );
