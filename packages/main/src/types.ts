@@ -16,12 +16,16 @@
 
 import * as MIDIConvert from 'midiconvert';
 
+import {
+  Observable,
+} from 'rxjs';
+
 import { DOMSource } from '@cycle/dom/rxjs-typings';
 import { VNode } from '@cycle/dom';
 
 import {
-  Observable,
-} from 'rxjs';
+  Note,
+} from 'cycle-midi';
 
 // When the next version of TS comes out, we can change these back to enums
 export const PlaybackStatus = {
@@ -39,20 +43,13 @@ export const MessageType = {
   SONG_CHANGED: 'song_changed',
   PLAYBACK_STATUS_CHANGED: 'playback_status_changed',
   ACTIVE_TRACKS_CHANGED: 'active_tracks_changed',
-  PIANO_AVAILABILITY_CHANGED: 'piano_availability_changed',
+  INSTRUMENT_AVAILABILITY_CHANGED: 'instrument_availability_changed',
   UPDATE_STATUSES: 'update_statuses',
 };
 
 export type Message<T> = {
   type: string, // this becomes MessageType again when string enums come out
   payload: T
-};
-
-export type Note = {
-  note: number,
-  velocity: number,
-  duration: number,
-  time: number,
 };
 
 export type Song = {
@@ -69,15 +66,15 @@ export type Sources<T> = {
   DOM: DOMSource,
   hostPage: Observable<T>,
   messages: Observable<Message<any>>,
-  pianoConnection: Observable<boolean>,
+  instrumentConnection: Observable<boolean>,
 };
 
 export type Sinks = {
   DOM: Observable<VNode>,
   hostPage: Observable<string>,
   messages: Observable<Message<any>>,
-  piano: Observable<Note>,
-  pianoConnection: Observable<any>,
+  instrument: Observable<Note>,
+  instrumentConnection: Observable<any>,
 };
 
 export type Dict<T> = {

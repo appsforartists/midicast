@@ -21,19 +21,20 @@
 import { run } from '@cycle/rxjs-run';
 import { makeDOMDriver } from '@cycle/dom';
 
-import Popup from './cycles/Popup';
-import Background from './cycles/Background';
-import makePianoAndConnectionDriver from './pianoDriver';
+import makeInstrumentAndConnectionDriver from 'cycle-midi';
 
 import {
   hostPageDriver,
   makeMessagesDriver,
 } from 'cycle-extensions';
 
+import Popup from './cycles/Popup';
+import Background from './cycles/Background';
+
 const {
-  pianoDriver,
-  pianoConnectionDriver,
-} = makePianoAndConnectionDriver();
+  instrumentDriver,
+  connectionDriver,
+} = makeInstrumentAndConnectionDriver();
 
 const isBackgroundPage = window.innerWidth === 0 && window.innerHeight === 0;
 
@@ -56,8 +57,8 @@ if (!isBackgroundPage) {
     Background,
     {
       messages: makeMessagesDriver({ shouldInitiate: false }),
-      piano: pianoDriver,
-      pianoConnection: pianoConnectionDriver,
+      instrument: instrumentDriver,
+      instrumentConnection: connectionDriver,
     }
   );
 

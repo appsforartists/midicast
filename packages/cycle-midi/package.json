@@ -1,0 +1,32 @@
+{
+  "name": "cycle-midi",
+  "version": "1.0.0",
+  "scripts": {
+    "clean": "rm -rf ./dist/*; mkdir -p ./dist/",
+    "lint": "../../node_modules/.bin/tslint -c ./tslint.json --project tsconfig.json",
+    "build": "yarn run clean; ../../node_modules/.bin/tsc"
+  },
+  "description": "Cycle drivers to control real instruments with WebMIDI",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "typescript:main": "src/index.ts",
+  "author": "Brenton Simpson <appsforartists@google.com>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "rxjs": "^5.0.2",
+    "tslib": "^1.4.0"
+  },
+  "devDependencies": {
+    "@types/webmidi": "^2.0.1"
+  },
+  "keywords": [
+    "cycle",
+    "cyclejs",
+    "driver",
+    "midi",
+    "webmidi",
+    "instrument",
+    "instruments",
+    "piano"
+  ]
+}

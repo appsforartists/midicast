@@ -32,7 +32,7 @@ import {
   Sources,
 } from '../types';
 
-export default function Background({ messages: message$, pianoConnection: pianoAvailability$ }: Sources<any>): Sinks {
+export default function Background({ messages: message$, instrumentConnection: instrumentAvailability$ }: Sources<any>): Sinks {
   const songRequest$: Observable<Song> = message$.filter(
     (message: Message<any>) => message.type === MessageType.PLAY_SONG
   ).pluck('payload');
@@ -61,7 +61,7 @@ export default function Background({ messages: message$, pianoConnection: pianoA
     (status: PlaybackStatus) => status === PlaybackStatus.STOPPED
   );
 
-  const pianoIsOffline$ = pianoAvailability$.filter(
+  const instrumentIsOffline$ = instrumentAvailability$.filter(
     isAvailable => isAvailable === false
   );
 
@@ -93,7 +93,7 @@ export default function Background({ messages: message$, pianoConnection: pianoA
         return Observable.empty();
       }
     ).takeUntil(
-      pianoIsOffline$
+      instrumentIsOffline$
     )
   ).publishReplay();
 
@@ -161,7 +161,7 @@ export default function Background({ messages: message$, pianoConnection: pianoA
     ).pluck(0).takeUntil(
       Observable.merge(
         stopRequest$,
-        pianoIsOffline$,
+        instrumentIsOffline$,
       )
     )
   );
@@ -278,8 +278,8 @@ export default function Background({ messages: message$, pianoConnection: pianoA
     songStopped$.mapTo(PlaybackStatus.STOPPED)
   ).startWith(PlaybackStatus.STOPPED);
 
-  const pianoAvailabilityChangedMessage$ = pianoAvailability$.map(
-    wrapWithMessage(MessageType.PIANO_AVAILABILITY_CHANGED)
+  const instrumentAvailabilityChangedMessage$ = instrumentAvailability$.map(
+    wrapWithMessage(MessageType.INSTRUMENT_AVAILABILITY_CHANGED)
   );
 
   const playbackStatusChangedMessage$ = currentPlaybackStatus$.map(
@@ -297,31 +297,31 @@ export default function Background({ messages: message$, pianoConnection: pianoA
   return {
     // TODO: abstract this pattern into something less repetitive
     messages: Observable.merge(
-      pianoAvailabilityChangedMessage$,
+      instrumentAvailabilityChangedMessage$,
       playbackStatusChangedMessage$,
       songChangedMessage$,
       activeTracksChangedMessage$,
       updateStatusesRequest$.withLatestFrom(
-        pianoAvailabilityChangedMessage$,
+        instrumentAvailabilityChangedMessage$,
         playbackStatusChangedMessage$,
         songChangedMessage$,
         activeTracksChangedMessage$,
       ).flatMap(
         ([,
-          pianoAvailabilityMessage,
+          instrumentAvailabilityMessage,
           playbackStatusMessage,
           songChangedMessage,
           activeTracksChangedMessage,
         ]) => Observable.of(
-          pianoAvailabilityMessage,
+          instrumentAvailabilityMessage,
           playbackStatusMessage,
           songChangedMessage,
           activeTracksChangedMessage,
         )
       ),
     ),
-    piano: note$,
-    pianoConnection: Observable.merge(
+    instrument: note$,
+    instrumentConnection: Observable.merge(
       songRequest$,
       playRequest$,
     ).startWith(undefined)

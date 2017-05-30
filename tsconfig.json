@@ -16,10 +16,6 @@
     "noImplicitThis": true,
     "sourceMap": true,
     "strictNullChecks": true,
-    "target": "es6",
-    "types": [
-      "chrome",
-      "webmidi"
-    ]
+    "target": "es6"
   }
 }
