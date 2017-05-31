@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "bootstrap": "$( yarn bin )/lerna bootstrap --hoist",
+    "build": "$( yarn bin )/lerna run build"
+  },
   "devDependencies": {
     "lerna": "^2.0.0-rc.5",
     "pundle": "^2.0.0-beta12",
