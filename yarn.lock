@@ -1063,8 +1063,8 @@ error-ex@^1.2.0:
     is-arrayish "^0.2.1"
 
 es5-ext@^0.10.14, es5-ext@^0.10.9, es5-ext@~0.10.14:
-  version "0.10.21"
-  resolved "https://registry.yarnpkg.com/es5-ext/-/es5-ext-0.10.21.tgz#19a725f9e51d0300bbc1e8e821109fd9daf55925"
+  version "0.10.22"
+  resolved "https://registry.yarnpkg.com/es5-ext/-/es5-ext-0.10.22.tgz#1876c51f990769c112c781ea3ebe89f84fd39071"
   dependencies:
     es6-iterator "2"
     es6-symbol "~3.1"
@@ -2585,45 +2585,11 @@ public-encrypt@^4.0.0:
     parse-asn1 "^5.0.0"
     randombytes "^2.0.1"
 
-pundle-api@^2.0.0-beta12, pundle-api@^2.0.0-beta5:
-  version "2.0.0-beta5"
-  resolved "https://registry.yarnpkg.com/pundle-api/-/pundle-api-2.0.0-beta5.tgz#4531d3d249a18168be18c4bac7a7e3d7b8a25cef"
-  dependencies:
-    ignore "^3.2.0"
-
 pundle-api@^2.0.0-beta9:
   version "2.0.0-beta9"
   resolved "https://registry.yarnpkg.com/pundle-api/-/pundle-api-2.0.0-beta9.tgz#812225db21da605ece319f68a50f75ac9a76b74e"
   dependencies:
     ignore "^3.2.0"
-
-pundle-browser@^2.0.0-beta5:
-  version "2.0.0-beta5"
-  resolved "https://registry.yarnpkg.com/pundle-browser/-/pundle-browser-2.0.0-beta5.tgz#0feb07dc3e1b1ad4d93a08c6c790f5ce9b518df8"
-  dependencies:
-    assert "^1.3.0"
-    browserify-zlib "^0.1.4"
-    buffer "^4.5.1"
-    console-browserify "^1.1.0"
-    constants-browserify "^1.0.0"
-    crypto-browserify "^3.11.0"
-    domain-browser "^1.1.7"
-    events "^1.1.0"
-    https-browserify "0.0.1"
-    os-browserify "^0.2.1"
-    path-browserify "0.0.0"
-    process "^0.11.2"
-    punycode "^1.4.1"
-    querystring-es3 "^0.2.1"
-    readable-stream "^2.0.6"
-    stream-browserify "^2.0.1"
-    stream-http "^2.2.1"
-    string_decoder "^0.10.31"
-    timers-browserify "^2.0.0"
-    tty-browserify "0.0.0"
-    url "^0.11.0"
-    util "^0.10.3"
-    vm-browserify "0.0.4"
 
 pundle-browser@^2.0.0-beta9:
   version "2.0.0-beta9"
@@ -2653,7 +2619,7 @@ pundle-browser@^2.0.0-beta9:
     util "^0.10.3"
     vm-browserify "0.0.4"
 
-pundle-cli@^2.0.0-beta12:
+pundle-cli@^2.0.0-beta13:
   version "2.0.0-beta9"
   resolved "https://registry.yarnpkg.com/pundle-cli/-/pundle-cli-2.0.0-beta9.tgz#00f5061e244f09bf3b53d1ae74e7a2c981b08db6"
   dependencies:
@@ -2667,24 +2633,7 @@ pundle-cli@^2.0.0-beta12:
     sb-copy "^1.0.1"
     sb-fs "^1.1.1"
 
-pundle-dev@^2.0.0-beta12:
-  version "2.0.0-beta12"
-  resolved "https://registry.yarnpkg.com/pundle-dev/-/pundle-dev-2.0.0-beta12.tgz#9adcfcdfbb2c25bcde76f32d978f575c401ecc60"
-  dependencies:
-    debug "^2.4.4"
-    express "^4.14.0"
-    lodash.difference "^4.5.0"
-    lodash.uniq "^4.5.0"
-    pundle "^2.0.0-beta12"
-    pundle-api "^2.0.0-beta12"
-    pundle-reporter-cli "^2.0.0-beta12"
-    sb-event-kit "^3.0.0"
-    send "^0.14.1"
-    ws "^1.1.1"
-  optionalDependencies:
-    uws "^0.12.0"
-
-pundle-dev@^2.0.0-beta9:
+pundle-dev@^2.0.0-beta13, pundle-dev@^2.0.0-beta9:
   version "2.0.0-beta9"
   resolved "https://registry.yarnpkg.com/pundle-dev/-/pundle-dev-2.0.0-beta9.tgz#ad8546765e2d1815682c885aebc230b4b4c7bc55"
   dependencies:
@@ -2700,10 +2649,6 @@ pundle-dev@^2.0.0-beta9:
     ws "^1.1.1"
   optionalDependencies:
     uws "^0.12.0"
-
-pundle-fs@^2.0.0-beta5:
-  version "2.0.0-beta5"
-  resolved "https://registry.yarnpkg.com/pundle-fs/-/pundle-fs-2.0.0-beta5.tgz#f643621affb0cb4248dd307d69692aeaf5a0b20c"
 
 pundle-fs@^2.0.0-beta9:
   version "2.0.0-beta9"
@@ -2735,7 +2680,7 @@ pundle-loader-json@^2.0.0-beta9:
   dependencies:
     pundle-api "^2.0.0-beta9"
 
-pundle-preset-default@^2.0.0-beta12:
+pundle-preset-default@^2.0.0-beta13:
   version "2.0.0-beta9"
   resolved "https://registry.yarnpkg.com/pundle-preset-default/-/pundle-preset-default-2.0.0-beta9.tgz#e49d73381aeedfbf62d38371d0ac53bf5f5f3e56"
   dependencies:
@@ -2745,7 +2690,7 @@ pundle-preset-default@^2.0.0-beta12:
     pundle-reporter-cli "^2.0.0-beta9"
     pundle-resolver-default "^2.0.0-beta9"
 
-pundle-preset-typescript@^2.0.0-beta12:
+pundle-preset-typescript@^2.0.0-beta13:
   version "2.0.0-beta9"
   resolved "https://registry.yarnpkg.com/pundle-preset-typescript/-/pundle-preset-typescript-2.0.0-beta9.tgz#6ec46e8361d70742f57b8aa45078fc43ec8b288c"
   dependencies:
@@ -2753,7 +2698,7 @@ pundle-preset-typescript@^2.0.0-beta12:
     pundle-resolver-default "^2.0.0-beta9"
     pundle-transformer-typescript "^2.0.0-beta9"
 
-pundle-reporter-cli@^2.0.0-beta12, pundle-reporter-cli@^2.0.0-beta9:
+pundle-reporter-cli@^2.0.0-beta9:
   version "2.0.0-beta9"
   resolved "https://registry.yarnpkg.com/pundle-reporter-cli/-/pundle-reporter-cli-2.0.0-beta9.tgz#de1e7282f975f8fe891608feb6124b92e8628fdf"
   dependencies:
@@ -2775,25 +2720,7 @@ pundle-transformer-typescript@^2.0.0-beta9:
   dependencies:
     pundle-api "^2.0.0-beta9"
 
-pundle@^2.0.0-beta12:
-  version "2.0.0-beta5"
-  resolved "https://registry.yarnpkg.com/pundle/-/pundle-2.0.0-beta5.tgz#f3970d6d4b27b04bf000c59ccd1d6a19381cd9d9"
-  dependencies:
-    chalk "^1.1.3"
-    chokidar "^1.6.1"
-    lodash.difference "^4.5.0"
-    lodash.invert "^4.1.1"
-    lodash.uniq "^4.5.0"
-    pundle-api "^2.0.0-beta5"
-    pundle-browser "^2.0.0-beta5"
-    pundle-fs "^2.0.0-beta5"
-    resolve "^1.1.7"
-    sb-debounce "^1.0.2"
-    sb-event-kit "^2.0.0"
-    sb-promisify "^2.0.1"
-    source-map "^0.5.6"
-
-pundle@^2.0.0-beta9:
+pundle@^2.0.0-beta13, pundle@^2.0.0-beta9:
   version "2.0.0-beta9"
   resolved "https://registry.yarnpkg.com/pundle/-/pundle-2.0.0-beta9.tgz#a2d7fe3cb449531a8b8a7780e0a46d1659ea52d0"
   dependencies:
