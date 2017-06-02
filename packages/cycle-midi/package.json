@@ -13,8 +13,10 @@
   "author": "Brenton Simpson <appsforartists@google.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "rxjs": "^5.0.2",
     "tslib": "^1.4.0"
+  },
+  "peerDependencies": {
+    "rxjs": "^5.0.2"
   },
   "devDependencies": {
     "@types/webmidi": "^2.0.1"

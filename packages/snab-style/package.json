@@ -12,7 +12,7 @@
   "typescript:main": "src/index.ts",
   "author": "Brenton Simpson <appsforartists@google.com>",
   "license": "Apache-2.0",
-  "dependencies": {
+  "peerDependencies": {
     "snabbdom-jsx": "^0.3.1"
   },
   "keywords": [
