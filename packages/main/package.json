@@ -2,6 +2,7 @@
   "name": "midicast",
   "version": "1.0.0",
   "scripts": {
+    "build": "node ./build.js",
     "start": "../../node_modules/.bin/pundle --dev --dev-directory src",
     "lint": "../../node_modules/.bin/tslint -c ./tslint.json --project tsconfig.json"
   },
@@ -9,6 +10,9 @@
   "main": "dist/index.js",
   "author": "Brenton Simpson <appsforartists@google.com>",
   "license": "Apache-2.0",
+  "devDependencies": {
+    "rimraf": "^2.6.1"
+  },
   "dependencies": {
     "@cycle/dom": "^14.3.0",
     "@cycle/rxjs-run": "^3.3.0",

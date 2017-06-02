@@ -9,16 +9,16 @@ module.exports = {
   // ^ Setting this to true sets "process.env.NODE_ENV" to "development" in processed js, it's set to "production" otherwise
   entry: ['./src/index.ts'],
   output: {
-    bundlePath: '/dist/bundle.js',
+    bundlePath: './dist/bundle.js',
     sourceMap: true,
-    sourceMapPath: '/dist/bundle.js.map',
+    sourceMapPath: './dist/bundle.js.map',
   },
   server: {
     port: 8080,
-    hmrPath: '/dist/bundle_hmr',
+    hmrPath: '/bundle_hmr',
     hmrHost: 'http://localhost:8080',
-    bundlePath: '/dist/bundle.js',
-    sourceMapPath: '/dist/bundle.js.map',
+    bundlePath: '/bundle.js',
+    sourceMapPath: '/bundle.js.map',
     redirectNotFoundToIndex: true,
   },
   presets: [
