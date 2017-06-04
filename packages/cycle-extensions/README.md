@@ -1,6 +1,11 @@
-# WebExtensions driver for Cycle.js #
+# `cycle-extensions` #
+
+Cycle.js drivers to use in Chrome extensions and WebExtensions.
 
 ## Drivers ##
+
+- [`hostPageDriver`](#hostpagedriver)
+- [`messagesDriver`](#messagesdriver)
 
 ### `hostPageDriver` ###
 
