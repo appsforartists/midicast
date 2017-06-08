@@ -50,7 +50,7 @@ export const MIDICode = {
   DOWN: 0b10010000,
 };
 
-export default function makeInstrumentAndConnectionDriver(): InstrumentAndConnectionDriver {
+export function makeInstrumentAndConnectionDriver(): InstrumentAndConnectionDriver {
   let instrument$: Subject<WebMidi.MIDIOutput> = new Subject();
 
   return {
@@ -137,3 +137,4 @@ export default function makeInstrumentAndConnectionDriver(): InstrumentAndConnec
     }
   };
 };
+export default makeInstrumentAndConnectionDriver;
