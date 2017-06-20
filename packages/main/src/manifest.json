@@ -1,6 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Midicast",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhiiDBd1QM/U3xQRdnLRBgtGoU++rQDmLWpN2kpbA5WODxK1NB0niUjSDVdIw3GMxGpAtMD5RuI2nBWI/PSsRNH+mbaEjcI2FDpR4IR2GGkv+ywWxiomTAEnJhk1aFYyt0OebAIKw1h3NzBohLVvLsR1Hmm1GajCSwGMJqZ6XoZsEFxARwWRiBgqknKtN6bhuC4aPzCHsGFujtrlSS/+B76uYj2Vui8Oudzha3Ou8KTOa6jOJ0ayOX6nTdXY9btCzwu4bVRGOetKYMAXijaBJFV1o/JEuZs8Vq/30tiEhFUHcnUF1XjRt0TWCjYO3VXbBnaqneg2IfGEz0vbEOSbBPQIDAQAB",
   "version": "0.1.1",
   "content_security_policy": "script-src 'self' 'unsafe-eval' http://localhost:8080/bundle.js; object-src 'self'",
   "background": {
