@@ -1,10 +1,14 @@
 {
+  "private": true,
   "scripts": {
     "bootstrap": "$( yarn bin )/lerna bootstrap --hoist",
     "build": "$( yarn bin )/lerna run build"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "devDependencies": {
-    "lerna": "^2.0.0-rc.5",
+    "lerna": "^2.0.0",
     "pundle": "^2.0.0-beta13",
     "pundle-cli": "^2.0.0-beta13",
     "pundle-dev": "^2.0.0-beta13",
