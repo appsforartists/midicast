@@ -1,7 +1,7 @@
 {
   "name": "midicast",
   "private": true,
-  "version": "0.1.1",
+  "version": "0.1.2",
   "scripts": {
     "build": "node ./build.js",
     "start": "../../node_modules/.bin/pundle --dev --dev-directory src",
@@ -22,7 +22,7 @@
     "lodash": "^4.17.4",
     "midiconvert": "^0.4.1",
     "rxjs": "^5.0.2",
-    "snab-style": "^0.1.1",
+    "snab-style": "^0.1.2",
     "snabbdom-jsx": "^0.3.1",
     "tslib": "^1.4.0",
     "xstream": "^9.3.0"

@@ -1,6 +1,6 @@
 {
   "name": "snab-style",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "scripts": {
     "clean": "rm -rf ./dist/*; mkdir -p ./dist/",
     "lint": "../../node_modules/.bin/tslint -c ./tslint.json --project tsconfig.json",
