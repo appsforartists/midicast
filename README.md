@@ -42,7 +42,7 @@ Most of the logic lives in [`Background.ts`](./packages/main/src/cycles/Backgrou
 
 [`Popup.tsx`](./packages/main/src/cycles/Popup.tsx) draws the UI when the user [clicks the toolbar icon](https://developer.chrome.com/extensions/pageAction).  It displays playback controls, along with a [tabbed pane](./packages/main/src/cycles/TabbedPane.tsx) where the user may select a song, or change [which instruments are being played](./packages/main/src/cycles/TrackSelector.tsx).  Every time the popup opens, it requests the current state (such as which song is currently playing) from the background page.
 
-[`SongScanner.tsx`](./packages/main/src/cycles/SongScanner.tsx) is a tab in the popup.  It uses the [`hostPageDriver`](./src/extensionDrivers.ts) to search the currently-active tab for links that end in `.mid`, displaying them in a list.  When the user clicks one of the list items, it sends this message to the background page:
+[`SongScanner.tsx`](./packages/main/src/cycles/SongScanner.tsx) is a tab in the popup.  It uses the [`hostPageDriver`](./packages/cycle-extensions/src/index.ts) to search the currently-active tab for links that end in `.mid`, displaying them in a list.  When the user clicks one of the list items, it sends this message to the background page:
 
 ```javascript
 {
