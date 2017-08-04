@@ -1,7 +1,7 @@
 {
   "name": "midicast",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.1.1",
   "scripts": {
     "build": "node ./build.js",
     "start": "../../node_modules/.bin/pundle --dev --dev-directory src",
@@ -17,13 +17,13 @@
   "dependencies": {
     "@cycle/dom": "^14.3.0",
     "@cycle/rxjs-run": "^3.3.0",
-    "cycle-extensions": "^1.0.0",
-    "cycle-midi": "^1.0.0",
+    "cycle-extensions": "^0.1.1",
+    "cycle-midi": "^0.1.1",
     "lodash": "^4.17.4",
     "midiconvert": "^0.4.1",
     "rxjs": "^5.0.2",
+    "snab-style": "^0.1.1",
     "snabbdom-jsx": "^0.3.1",
-    "snab-style": "^1.0.0",
     "tslib": "^1.4.0",
     "xstream": "^9.3.0"
   }

@@ -1,6 +1,6 @@
 {
   "name": "cycle-extensions",
-  "version": "1.0.0",
+  "version": "0.1.1",
   "scripts": {
     "clean": "rm -rf ./dist/*; mkdir -p ./dist/",
     "lint": "../../node_modules/.bin/tslint -c ./tslint.json --project tsconfig.json",
