@@ -14,7 +14,7 @@ Midicast scans the page you're on for MIDI links.  Whatever it finds will show u
 
 ## Installation ##
 
-Midicast is available on the Chrome Web Store.
+[Midicast is available on the Chrome Web Store.](https://chrome.google.com/webstore/detail/fjnaegdodddmdifncleeakgdblhdoapg/)
 
 ## Troubleshooting ##
 
