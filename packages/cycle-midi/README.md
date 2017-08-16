@@ -39,7 +39,7 @@ function Background({ messages: message$, instrumentConnection: instrumentAvaila
           // number of milliseconds to play a note for
           duration: 150,
 
-          // 1 is very soft; 128 is very hard
+          // 0 is very soft; 127 is very hard
           velocity: Math.random() * 128,
 
           // number of milliseconds since the instrument connection to wait
@@ -52,7 +52,7 @@ function Background({ messages: message$, instrumentConnection: instrumentAvaila
       isAvailable => (
         {
           type: 'instrument_availability_changed',
-          payload: true,
+          payload: isAvailable,
         }
       )
     ),
