@@ -37,28 +37,27 @@ import {
   Note,
 } from 'cycle-midi';
 
-// When the next version of TS comes out, we can change these back to enums
-export const PlaybackStatus = {
-  STOPPED: 'stopped',
-  PAUSED: 'paused',
-  PLAYING: 'playing',
+export enum PlaybackStatus {
+  STOPPED = 'stopped',
+  PAUSED = 'paused',
+  PLAYING = 'playing',
 };
 
-export const MessageType = {
-  ERROR: 'error',
-  PLAY_SONG: 'play_song',
-  CHANGE_PLAYBACK_STATUS: 'change_playback_status',
-  CHANGE_TRACK_ACTIVE_STATUS: 'change_track_active_status',
-  CHANGE_ACTIVE_TRACKS: 'change_active_tracks',
-  SONG_CHANGED: 'song_changed',
-  PLAYBACK_STATUS_CHANGED: 'playback_status_changed',
-  ACTIVE_TRACKS_CHANGED: 'active_tracks_changed',
-  INSTRUMENT_AVAILABILITY_CHANGED: 'instrument_availability_changed',
-  UPDATE_STATUSES: 'update_statuses',
+export enum MessageType {
+  ERROR = 'error',
+  PLAY_SONG = 'play_song',
+  CHANGE_PLAYBACK_STATUS = 'change_playback_status',
+  CHANGE_TRACK_ACTIVE_STATUS = 'change_track_active_status',
+  CHANGE_ACTIVE_TRACKS = 'change_active_tracks',
+  SONG_CHANGED = 'song_changed',
+  PLAYBACK_STATUS_CHANGED = 'playback_status_changed',
+  ACTIVE_TRACKS_CHANGED = 'active_tracks_changed',
+  INSTRUMENT_AVAILABILITY_CHANGED = 'instrument_availability_changed',
+  UPDATE_STATUSES = 'update_statuses',
 };
 
 export type Message<T> = {
-  type: string, // this becomes MessageType again when string enums come out
+  type: MessageType,
   payload: T
 };
 
@@ -68,34 +67,42 @@ export type Song = {
 };
 
 export type Messages = {
-  type: 'error',
+  type: MessageType.ERROR,
   payload: string
 } | {
-  type: 'play_song',
+  type: MessageType.PLAY_SONG,
   payload: Song,
 } | {
-  type: 'change_playback_status',
-  payload: 'stopped' | 'paused' | 'playing',
+  type: MessageType.CHANGE_PLAYBACK_STATUS,
+  payload: PlaybackStatus,
 } | {
-  type: 'change_track_active_status',
+} | {
+  type: MessageType.CHANGE_ACTIVE_TRACKS,
+  payload: {
+    query: string,
+    active: boolean,
+    id: number | string,
+  },
+} | {
+  type: MessageType.CHANGE_TRACK_ACTIVE_STATUS,
   payload: {
     active: boolean,
     id: number,
   }
 } | {
-  type: 'song_changed',
+  type: MessageType.SONG_CHANGED,
   payload: MIDIConvert.MIDI
 } | {
-  type: 'playback_status_changed',
-  payload: 'stopped' | 'paused' | 'playing',
+  type: MessageType.PLAYBACK_STATUS_CHANGED,
+  payload: PlaybackStatus,
 } | {
-  type: 'active_tracks_changed',
+  type: MessageType.ACTIVE_TRACKS_CHANGED,
   payload: Array<number>,
 } | {
-  type: 'instrument_availability_changed',
+  type: MessageType.INSTRUMENT_AVAILABILITY_CHANGED,
   payload: boolean,
 } | {
-  type: 'update_statuses',
+  type: MessageType.UPDATE_STATUSES,
   payload: undefined,
 };
 

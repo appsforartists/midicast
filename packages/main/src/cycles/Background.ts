@@ -43,15 +43,15 @@ export default function Background({ messages: message$, instrumentConnection: i
     (message: Message<any>) => message.type === MessageType.PLAY_SONG
   ).pluck('payload');
 
-  const changeStatusRequest$ = message$.filter(
+  const changeStatusRequest$: Observable<PlaybackStatus> = message$.filter(
     (message: Message<any>) => message.type === MessageType.CHANGE_PLAYBACK_STATUS
   ).pluck('payload');
 
-  const changeTrackActiveStatusRequest$ = message$.filter(
+  const changeTrackActiveStatusRequest$: Observable<{ active: boolean, id: number }> = message$.filter(
     (message: Message<any>) => message.type === MessageType.CHANGE_TRACK_ACTIVE_STATUS
   ).pluck('payload');
 
-  const changeActiveTracksRequest$ = message$.filter(
+  const changeActiveTracksRequest$: Observable<{ query: string, active: boolean, id: number | string | undefined }> = message$.filter(
     (message: Message<any>) => message.type === MessageType.CHANGE_ACTIVE_TRACKS
   ).pluck('payload');
 
@@ -59,13 +59,12 @@ export default function Background({ messages: message$, instrumentConnection: i
     (message: Message<any>) => message.type === MessageType.UPDATE_STATUSES
   ).pluck('payload');
 
-  // When TS2.4 lands, these can go back to status: PlaybackStatus
   const playRequest$ = changeStatusRequest$.filter(
-    (status: string) => status === PlaybackStatus.PLAYING
+    (status: PlaybackStatus) => status === PlaybackStatus.PLAYING
   );
 
   const stopRequest$ = changeStatusRequest$.filter(
-    (status: string) => status === PlaybackStatus.STOPPED
+    (status: PlaybackStatus) => status === PlaybackStatus.STOPPED
   );
 
   const instrumentIsOffline$ = instrumentAvailability$.filter(
@@ -97,7 +96,7 @@ export default function Background({ messages: message$, instrumentConnection: i
     ).catch(
       error => {
         console.error(error);
-        return Observable.empty();
+        return Observable.empty() as ConnectableObservable<MIDIConvert.MIDI>;
       }
     ).takeUntil(
       instrumentIsOffline$
@@ -180,7 +179,7 @@ export default function Background({ messages: message$, instrumentConnection: i
   const activeTrackIDProxy: Subject<Array<number>> = new Subject();
 
   const allTrackIDs$: Observable<Array<number>> = midiSong$.map(
-    (song: MIDIConvert.MIDI) => song.tracks.map(track => track.id)
+    (song: MIDIConvert.MIDI) => song.tracks.map(track => track.id!)
   );
 
   const activeTrackIDs$ = Observable.merge(
@@ -329,8 +328,7 @@ export default function Background({ messages: message$, instrumentConnection: i
   };
 }
 
-// When TS2.4 lands, this can go back to wrapWithMessage(`type: MessageType`)
-export function wrapWithMessage<T>(type: string): (type: T) => Message<T> {
+export function wrapWithMessage<T>(type: MessageType): (type: T) => Message<T> {
   return function (payload) {
     return {
       type,

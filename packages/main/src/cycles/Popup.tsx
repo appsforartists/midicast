@@ -34,6 +34,7 @@ import {
 import {
   DOMSink,
   DOMSource,
+  Messages,
   MessageType,
   MessagesSink,
   MessagesSource,
@@ -54,7 +55,7 @@ export default function Popup({ DOM, messages: message$, ...sources }: Sources):
   // page when the popup reopens
   const currentPlaybackStatus$: Observable<string> = message$.filter(
     message => message.type === MessageType.PLAYBACK_STATUS_CHANGED
-  ).pluck('payload').startWith(PlaybackStatus.STOPPED);
+  ).pluck<Messages, string>('payload').startWith(PlaybackStatus.STOPPED);
 
   const currentSongName$: Observable<Song> = message$.filter(
     message => message.type === MessageType.SONG_CHANGED

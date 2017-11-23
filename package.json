@@ -15,6 +15,6 @@
     "pundle-preset-default": "^2.0.0-beta13",
     "pundle-preset-typescript": "^2.0.0-beta13",
     "tslint": "^4.2.0",
-    "typescript": "2.3.1"
+    "typescript": "2.6"
   }
 }

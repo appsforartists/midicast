@@ -48,7 +48,7 @@ export type Sinks = DOMSink & HostPageSink & MessagesSink;
 
 export default function SongScanner({ DOM, hostPage: midiLinks$, messages: message$ }: Sources): Sinks {
   const selectedSong$: Observable<Song> = DOM.select('.song-link').events('click').map(
-    event => (event.currentTarget as HTMLElement).dataset,
+    event => (event.currentTarget as HTMLElement).dataset as Song,
   );
 
   return {
@@ -63,8 +63,7 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
             !midiLinks
               ? ''
               : midiLinks.length === 0
-                ? <Column
-                  >
+                ? <Column>
                     <p
                       className = 'mdc-typography--headline'
                       style = {
@@ -128,7 +127,7 @@ export default function SongScanner({ DOM, hostPage: midiLinks$, messages: messa
     messages: selectedSong$.map(
       song => (
         {
-          type: MessageType.PLAY_SONG,
+          type: MessageType.PLAY_SONG as MessageType.PLAY_SONG,
           payload: song,
         }
       ),
